@@ -141,6 +141,32 @@ textarea.diary{min-height:45vh;margin-top:12px;font-size:17px;line-height:1.65;p
 .dentry.on{box-shadow:0 0 0 2px var(--plum)}
 .dentry b{font-weight:700}.dentry span{color:var(--mute);font-size:13px;margin-left:8px}
 .dentry p{margin:4px 0 0;color:var(--mute);font-size:15px;overflow-wrap:anywhere}
+.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:22px 0 14px}
+.cal{background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;overflow-x:auto}
+.cal>.calgrid,.calbody>.calgrid{min-width:720px}
+.calgrid{display:grid;grid-template-columns:56px repeat(7,minmax(0,1fr));position:relative}
+.cg-head{text-align:center;padding:10px 4px 6px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
+.cg-head span{display:block}
+.cg-head b{display:block;font:700 20px/1.2 var(--hd);color:var(--ink)}
+.cg-head.t b{margin:2px auto 0;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);margin-top:2px}
+.cg-gut.ad{font-size:11px;color:var(--mute);padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
+.cg-ad{border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px;display:grid;gap:3px;align-content:start;min-height:32px}
+.adc{font-size:12px;font-weight:500;background:var(--plumsoft);color:var(--plum);border-radius:6px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adc.x{opacity:.5;text-decoration:line-through}
+.calbody{max-height:calc(100vh - 290px);min-height:360px;overflow:auto}
+.hrs{position:relative}.hrs span{position:absolute;right:8px;transform:translateY(-50%);font-size:11px;color:var(--mute)}.hrs span:first-child{transform:none;top:2px!important}
+.cg-col{position:relative;border-left:1px solid var(--line);background-image:linear-gradient(var(--line) 1px,transparent 1px);cursor:copy}
+.cg-col.t{background-color:color-mix(in srgb,var(--plum) 5%,transparent)}
+.ev{position:absolute;min-height:0;padding:4px 7px;border-radius:9px;background:var(--plum);color:light-dark(#fff,#1b1815);text-align:left;overflow:hidden;display:block;font-weight:400;box-shadow:0 1px 3px var(--sh);cursor:pointer;line-height:1.25}
+.ev b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ev span{font-size:11px;opacity:.85}
+.ev.sm1{display:flex;gap:6px;align-items:center}.ev.sm1 span{white-space:nowrap}
+.ev.x{opacity:.45}.ev.x b{text-decoration:line-through}
+.nowl{position:absolute;left:0;right:0;height:2px;background:var(--acc);pointer-events:none}.nowl::before{content:'';position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--acc)}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(20,15,10,.45);display:grid;place-items:center;padding:16px}
+.sheet{background:var(--bg);border-radius:22px;padding:22px;width:min(520px,100%);display:grid;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow:auto}
+.fl{display:grid;gap:4px;font-size:13px;color:var(--mute);flex:1 1 120px}
+.sheet .r{display:flex;gap:8px;flex-wrap:wrap}
+.sheet input[type=time],.sheet input[type=date]{width:100%}
 .btnl{display:inline-grid;place-items:center;border-radius:12px;cursor:pointer;font-weight:600}
 body.login nav.tabs{display:none}
 .foot{color:var(--mute);font-size:13px;margin:36px 0 24px}
@@ -171,6 +197,7 @@ summary small{font:500 14px 'Golos Text',sans-serif;color:var(--mute);margin-lef
 <nav class="tabs" aria-label="Разделы"><div>
 <b class="brand">Мой день</b>
 <a href="#today" id="n-today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Сегодня</a>
+<a href="#calendar" id="n-calendar"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h3v3H8z"/></svg>Календарь</a>
 <a href="#projects" id="n-projects"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Проекты</a>
 <a href="#inbox" id="n-inbox"><svg viewBox="0 0 24 24"><path d="M4 13l2.5-7h11L20 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 13h4.5l1 2h5l1-2H20"/></svg>Выгрузка</a>
 <a href="#diary" id="n-diary"><svg viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h4"/></svg>Дневник</a>
@@ -187,9 +214,10 @@ const pad=n=>String(n).padStart(2,'0');
 const dk=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const blank=()=>({v:2,tasks:[],blocks:[],projects:[],routines:[],plans:[],rlog:{},days:{},focus:null,updated:0});
+const blank=()=>({v:2,tasks:[],blocks:[],events:[],projects:[],routines:[],plans:[],rlog:{},days:{},focus:null,updated:0});
 function migrate(o){
   const s=Object.assign(blank(),o||{});
+  if(s.blocks&&s.blocks.length){s.blocks.forEach(b=>s.events.push({id:b.id,t:b.t,d:b.d,a:b.a,b:b.b,rep:null,ex:[],done:b.x?{[b.d]:1}:{}}));s.blocks=[]}
   if((o&&o.v||1)<2){
     s.tasks=(s.tasks||[]).map(t=>({id:t.id,t:t.t,w:t.w||2,p:t.p||null,s:t.s==='top'?'today':t.s,d:t.d||'',done:t.done||'',o:t.o||0}));
     for(const k in (o.notes||{}))(s.days[k]=s.days[k]||{}).note=o.notes[k];
@@ -202,7 +230,7 @@ try{const r=localStorage.getItem(K);if(r)S=migrate(JSON.parse(r))}catch(e){}
 const SB_URL='https://pnukkzddmmjjnghumahg.supabase.co',SB_KEY='sb_publishable_DIRkmw4ROxm2M4UHypZCjg_ZzcR3esX';
 let sb=null,user=null,authReady=false;try{sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){}
 let cloud=false,writing=false,dirty=false,saveT=null,toastT=null,actx=null,lastMin='';
-const ui={dk:null,dq:'',pick:null,undo:null,eedit:false,sel:null,skip:(()=>{try{return localStorage.getItem('planner-skip')==='1'}catch(e){return false}})()};
+const ui={wk:null,ed:null,h0:7,dk:null,dq:'',pick:null,undo:null,eedit:false,sel:null,skip:(()=>{try{return localStorage.getItem('planner-skip')==='1'}catch(e){return false}})()};
 
 const today=()=>dk();
 const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
@@ -220,6 +248,11 @@ const dBetween=(a,b)=>Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864
 const planHits=(pl,k)=>k>=pl.start&&(pl.r==='week'?pl.days.includes(dow(k)):dBetween(pl.start,k)%pl.n===0);
 const ruleText=pl=>!pl?'':pl.r==='week'?(pl.days.length===7?'каждый день':pl.days.map(i=>DN[i]).join(', ')):pl.n===1?'каждый день':pl.n===2?'через день':'каждые '+pl.n+' дн.';
 const human=k=>{const s=new Date(k+'T12:00').toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'long'});return s};
+/* ---------- calendar events ---------- */
+const occurs=(e,k)=>{if(k<e.d||(e.ex&&e.ex.includes(k)))return false;if(!e.rep)return k===e.d;if(e.rep.until&&k>e.rep.until)return false;return e.rep.r==='week'?e.rep.days.includes(dow(k)):dBetween(e.d,k)%e.rep.n===0};
+const occOn=k=>S.events.filter(e=>occurs(e,k)).sort((a,b)=>a.a<b.a?-1:a.a>b.a?1:0);
+const toMin=hm=>{const[h,m]=hm.split(':').map(Number);return h*60+m};
+const repText=r=>!r?'':r.r==='week'?(r.days.length===7?'каждый день':r.days.map(i=>DN[i]).join(', ')):r.n===1?'каждый день':r.n===2?'через день':'каждые '+r.n+' дн.';
 /* recurring tasks: create today's copy once; yesterday's unfinished copies simply expire */
 function materialize(){
   const k=today(),n0=S.tasks.length,seen=new Set();
@@ -231,7 +264,7 @@ function materialize(){
 const steps=pid=>S.tasks.filter(t=>t.p===pid&&t.s!=='inbox').sort((a,b)=>a.o-b.o);
 const nextStep=pid=>steps(pid).find(t=>t.s==='later');
 const weekDone=pid=>S.tasks.filter(t=>t.p===pid&&t.s==='done'&&t.done>=monday()).length;
-const view=()=>({'#projects':'projects','#inbox':'inbox','#diary':'diary','#review':'review'})[location.hash]||'today';
+const view=()=>({'#calendar':'calendar','#projects':'projects','#inbox':'inbox','#diary':'diary','#review':'review'})[location.hash]||'today';
 
 function score(k){
   let p=0,e=0;const L=S.rlog[k]||{};
@@ -242,7 +275,9 @@ function score(k){
 function prune(){
   const lim=dk(new Date(Date.now()-90*864e5));
   S.tasks=S.tasks.filter(t=>!(t.s==='done'&&t.done<lim));
-  S.blocks=S.blocks.filter(b=>b.d>=lim);
+  S.blocks=[];
+  S.events=S.events.filter(e=>e.rep||e.d>=lim);
+  S.events.forEach(e=>{for(const k in (e.done||{}))if(k<lim)delete e.done[k];if(e.ex)e.ex=e.ex.filter(k=>k>=lim)});
   for(const k in S.rlog)if(k<lim)delete S.rlog[k];
   const ylim=dk(new Date(Date.now()-800*864e5));for(const k in S.days)if(k<ylim&&!S.days[k].note)delete S.days[k];
 }
@@ -318,8 +353,9 @@ function todayHTML(){
   const en=day(today()).en,k=en?(en<=2?1:en<=3?2:3):null;
   if(act.length)A+=`<h2>Взять из проектов <small>${k?'сегодня по силам: '+k:'выбери 1–3'}</small></h2><div class="stack">${act.map(x=>`<div class="item"><span class="tt">${esc(x.n.t)}<small>${tag(x.p)}${dots(x.n.w)}${x.lag>0?' · на неделе ещё '+x.lag:''}</small></span><button class="soft sm" data-a="totoday" data-id="${x.n.id}">+ сегодня</button></div>`).join('')}</div>`;
   if(TL.length)A+=`<h2>Хвосты <small>с прошлых дней</small></h2><div class="stack">${TL.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">На сегодня</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="Отложить">↩</button></div>`).join('')}</div>`;
-  const B=S.blocks.filter(b=>b.d===today()).sort((a,b)=>a.a<b.a?-1:1),n=nowHM(),st=B.length?B[B.length-1].b:n;
-  Z+=`<details class="tl"${B.length?' open':''}><summary>План по времени${B.length?' · '+B.length:'<small>+ добавить</small>'}</summary><div class="stack">${B.map(b=>{const cur=!b.x&&b.a<=n&&n<b.b;return `<div class="item${b.x?' x':''}${cur?' cur':''}"><time>${b.a}</time><span class="tt">${esc(b.t)}<small>до ${b.b}${cur?' · сейчас':''}</small></span><button class="chk${b.x?' on':''}" data-a="bx" data-id="${b.id}" aria-label="Отметить"></button><button class="ic" data-a="bdel" data-id="${b.id}" aria-label="Удалить">✕</button></div>`}).join('')}</div>
+  const kT=today(),B=occOn(kT),n=nowHM(),st=B.length&&B[B.length-1].b>n?B[B.length-1].b:n;
+  Z+=`<details class="tl"${B.length?' open':''}><summary>План по времени${B.length?' · '+B.length:'<small>+ добавить</small>'}</summary><div class="stack">${B.map(b=>{const x=!!(b.done&&b.done[kT]),cur=!x&&b.a<=n&&n<b.b;return `<div class="item${x?' x':''}${cur?' cur':''}"><time>${b.a}</time><span class="tt">${esc(b.t)}<small>до ${b.b}${cur?' · сейчас':''}${b.rep?' · ↻ '+repText(b.rep):''}</small></span><button class="chk${x?' on':''}" data-a="bx" data-id="${b.id}" aria-label="Отметить"></button><button class="ic" data-a="bdel" data-id="${b.id}" aria-label="${b.rep?'Убрать сегодня':'Удалить'}">✕</button></div>`}).join('')}</div>
+  <p class="hint"><a href="#calendar">Открыть календарь</a> — там вся неделя и повторы.</p>
   <form class="add" id="bf"><div class="r"><input type="time" id="ba" required value="${st}" aria-label="Начало"><input type="time" id="bb" required value="${addMin(st,60)}" aria-label="Конец"><input id="bt" placeholder="Что делаю" maxlength="120" required><button class="pri">Добавить</button></div></form></details>`;
   return h+`<div class="cols"><div>${A}</div><div class="side">${Z}</div></div><p class="foot">Маленькими шагами, по одному за раз.</p></div>`;
 }
@@ -389,6 +425,60 @@ function reviewHTML(){
   <p class="foot">Процент считается по баллам: лёгкая задача 1, средняя 2, сложная 3, минимум рутины — половина.</p></div>`;
 }
 
+/* ---------- Календарь ---------- */
+const HPX=48;
+function lanes(list){ /* side-by-side layout for overlapping events */
+  const out=[];let grp=[],end=-1;
+  const flush=()=>{const L=[];grp.forEach(o=>{let i=0;while(L[i]>o.s)i++;L[i]=o.en;o.lane=i});grp.forEach(o=>o.n=L.length);out.push(...grp);grp=[]};
+  list.map(e=>({ev:e,s:toMin(e.a),en:Math.max(toMin(e.b),toMin(e.a)+15)})).forEach(o=>{if(o.s>=end&&grp.length)flush();grp.push(o);end=Math.max(end,o.en)});
+  if(grp.length)flush();return out;
+}
+function scrollNow(){setTimeout(()=>{const b=$('#calbody');if(!b)return;const m=new Date().getHours()*60;b.scrollTop=Math.max(0,(m/60-(ui.h0||0)-1.5)*HPX)},0)}
+function calHTML(){
+  const wk=ui.wk||(ui.wk=monday()),days=[...Array(7)].map((_,i)=>shift(wk,i)),k0=today();
+  let h0=7;days.forEach(k=>occOn(k).forEach(e=>{h0=Math.min(h0,Math.floor(toMin(e.a)/60))}));ui.h0=h0;
+  const H=24-h0,nowM=new Date().getHours()*60+new Date().getMinutes();
+  const f1=new Date(days[0]+'T12:00'),f7=new Date(days[6]+'T12:00');
+  const title=f1.getMonth()===f7.getMonth()?f1.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}):f1.toLocaleDateString('ru-RU',{month:'short'})+' – '+f7.toLocaleDateString('ru-RU',{month:'short',year:'numeric'});
+  const allday=k=>{const T=S.tasks.filter(t=>t.d===k&&!t.pl&&(t.s==='today'||t.s==='done')),P=(S.plans||[]).filter(pl=>planHits(pl,k));
+    return [...T.map(t=>`<span class="adc${t.s==='done'?' x':''}" title="${esc(t.t)}">${esc(t.t)}</span>`),...P.map(pl=>`<span class="adc" title="${esc(pl.t)}">↻ ${esc(pl.t)}</span>`)].join('')};
+  let g=`<div class="calgrid"><div class="cg-gut"></div>${days.map((k,i)=>{const d=new Date(k+'T12:00');return `<div class="cg-head${k===k0?' t':''}"><span>${DN[i]}</span><b>${d.getDate()}</b></div>`}).join('')}
+  <div class="cg-gut ad">весь день</div>${days.map(k=>`<div class="cg-ad">${allday(k)}</div>`).join('')}</div>
+  <div class="calbody" id="calbody"><div class="calgrid" style="height:${H*HPX}px">
+  <div class="cg-gut hrs">${[...Array(H)].map((_,i)=>`<span style="top:${i*HPX}px">${pad(h0+i)}:00</span>`).join('')}</div>`;
+  days.forEach(k=>{
+    g+=`<div class="cg-col${k===k0?' t':''}" data-k="${k}" style="background-size:100% ${HPX}px">`;
+    lanes(occOn(k)).forEach(o=>{const e=o.ev,top=(toMin(e.a)/60-h0)*HPX,ht=Math.max(22,(o.en-toMin(e.a))/60*HPX-2),done=e.done&&e.done[k];
+      g+=`<button class="ev${done?' x':''}${ht<40?' sm1':''}" data-a="evopen" data-id="${e.id}" data-k="${k}" style="top:${top}px;height:${ht}px;left:calc(${o.lane/o.n*100}% + 2px);width:calc(${100/o.n}% - 4px)"><b>${esc(e.t)}</b><span>${e.a}–${e.b}${e.rep?' ↻':''}</span></button>`});
+    if(k===k0&&nowM/60>=h0)g+=`<i class="nowl" style="top:${(nowM/60-h0)*HPX}px"></i>`;
+    g+='</div>'});
+  g+='</div></div>';
+  return `<div class="wrap calwrap"><div class="calbar"><h2 style="margin:0">${(title.charAt(0).toUpperCase()+title.slice(1)).replace(/\s?г\.$/,'')}</h2>
+  <div class="row" style="margin:0"><button class="ic" data-a="wprev" aria-label="Предыдущая неделя" style="font-size:22px;color:var(--ink)">‹</button><button class="soft sm" data-a="wtoday">Сегодня</button><button class="ic" data-a="wnext" aria-label="Следующая неделя" style="font-size:22px;color:var(--ink)">›</button><button class="pri sm" data-a="evnew">+ Событие</button></div></div>
+  <div class="cal">${g}</div><p class="hint">Нажми на пустое место в сетке, чтобы добавить событие на это время, или на событие, чтобы изменить его.</p></div>`;
+}
+function openEd(e,k){
+  ui.ed={id:e.id||null,t:e.t||'',d:e.d,a:e.a,b:e.b||addMin(e.a,60),k:k||e.d,
+    r:!e.rep?'none':e.rep.r==='week'?(e.rep.days.length===7?'day':'week'):(e.rep.n===1?'day':'n'),days:e.rep&&e.rep.r==='week'?e.rep.days.slice():[dow(e.d)],n:e.rep&&e.rep.r==='n'?e.rep.n:2,until:e.rep&&e.rep.until||''};
+  render();setTimeout(()=>{const i=$('#edt');if(i)i.focus()},0);
+}
+function editorHTML(){
+  const E=ui.ed;if(!E)return'';const ex=E.id&&S.events.find(x=>x.id===E.id),rec=ex&&ex.rep;
+  return `<div class="modal" data-a="edclose"><form class="sheet" id="evf" data-a="noop" role="dialog" aria-label="Событие"><h2 style="margin-top:0">${E.id?'Событие':'Новое событие'}</h2>
+  <input id="edt" placeholder="Что будешь делать" maxlength="120" required value="${esc(E.t)}">
+  <div class="r"><label class="fl">День<input type="date" id="edd" required value="${E.d}"></label><label class="fl">С<input type="time" id="eda" required value="${E.a}"></label><label class="fl">До<input type="time" id="edb" required value="${E.b}"></label></div>
+  <label class="fl">Повтор<select id="edr"><option value="none"${E.r==='none'?' selected':''}>Не повторять</option><option value="day"${E.r==='day'?' selected':''}>Каждый день</option><option value="week"${E.r==='week'?' selected':''}>По дням недели</option><option value="n"${E.r==='n'?' selected':''}>Каждые N дней</option></select></label>
+  ${E.r==='week'?`<div class="chips">${DN.map((d,i)=>`<label><input type="checkbox" name="edw" value="${i}"${E.days.includes(i)?' checked':''}><span>${d}</span></label>`).join('')}</div>`:''}
+  ${E.r==='n'?`<div class="nrow">каждые <input type="number" id="edn" min="1" max="60" value="${E.n}"> дн.</div>`:''}
+  ${E.r!=='none'?`<label class="fl">Повторять до (необязательно)<input type="date" id="edu" value="${E.until}"></label>`:''}
+  <div class="row" style="justify-content:space-between;margin-top:16px"><div class="row" style="margin:0">${ex?(rec?`<button type="button" class="soft sm" data-a="eddelone">Удалить только ${human(E.k)}</button><button type="button" class="sm" data-a="eddel" style="color:var(--mute)">Удалить все повторы</button>`:`<button type="button" class="soft sm" data-a="eddel">Удалить</button>`):''}</div>
+  <div class="row" style="margin:0"><button type="button" class="sm" data-a="edclose">Отмена</button><button class="pri">Сохранить</button></div></div></form></div>`;
+}
+function readEd(){const E=ui.ed;if(!E)return;const v=id=>{const x=$('#'+id);return x?x.value:null};
+  E.t=v('edt')??E.t;E.d=v('edd')||E.d;E.a=v('eda')||E.a;E.b=v('edb')||E.b;E.r=v('edr')||E.r;
+  const ch=document.querySelectorAll('input[name=edw]');if(ch.length)E.days=[...ch].filter(x=>x.checked).map(x=>+x.value);
+  if(v('edn'))E.n=Math.max(1,Math.min(60,parseInt(v('edn'))||1));if(v('edu')!==null)E.until=v('edu')||''}
+
 /* ---------- Дневник ---------- */
 const shift=(k,n)=>{const d=new Date(k+'T12:00');d.setDate(d.getDate()+n);return dk(d)};
 function diaryList(){
@@ -422,8 +512,8 @@ function render(){
   const lg=sb&&authReady&&!user&&!ui.skip;document.body.classList.toggle('login',!!lg);
   if(lg){$('#app').innerHTML=loginHTML();return}
   const v=view();
-  ['today','projects','inbox','diary','review'].forEach(x=>{const a=$('#n-'+x);a.className=x===v?'on':'';if(x===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  $('#app').innerHTML=v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML();
+  ['today','calendar','projects','inbox','diary','review'].forEach(x=>{const a=$('#n-'+x);a.className=x===v?'on':'';if(x===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  $('#app').innerHTML=(v==='calendar'?calHTML():v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML())+editorHTML();
   lastMin=nowHM();
 }
 
@@ -440,8 +530,8 @@ function markDone(t){
 }
 
 document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-a]');if(!b)return;
-  const a=b.dataset.a,id=b.dataset.id,t=S.tasks.find(x=>x.id===id),bl=S.blocks.find(x=>x.id===id),r=S.routines.find(x=>x.id===id),p=S.projects.find(x=>x.id===id);
+  let b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='noop')return;if(b.classList.contains('modal')&&e.target!==b)return;
+  const a=b.dataset.a,id=b.dataset.id,t=S.tasks.find(x=>x.id===id),r=S.routines.find(x=>x.id===id),p=S.projects.find(x=>x.id===id);
   const L=S.rlog[today()]||(S.rlog[today()]={});
   if(a==='tdone'&&t){markDone(t);save()}
   else if(a==='rfull'&&r){L[r.id]=L[r.id]==='full'?undefined:'full';if(!L[r.id])delete L[r.id];else toast('Готово! +'+r.w);save()}
@@ -471,8 +561,15 @@ document.addEventListener('click',e=>{
   else if(a==='totop'&&t){t.o=minO(t.p)-1;save()}
   else if(a==='tw'&&t){t.w=t.w%3+1;save()}
   else if(a==='tdel')remove('tasks',id);
-  else if(a==='bx'&&bl){bl.x=!bl.x;save()}
-  else if(a==='bdel')remove('blocks',id);
+  else if(a==='bx'){const e=S.events.find(x=>x.id===id),k=today();if(e){e.done=e.done||{};if(e.done[k])delete e.done[k];else e.done[k]=1;save()}}
+  else if(a==='bdel'){const e=S.events.find(x=>x.id===id);if(e&&e.rep){e.ex=e.ex||[];e.ex.push(today());save();toast('Убрано на сегодня')}else remove('events',id)}
+  else if(a==='wprev'||a==='wnext'){ui.wk=shift(ui.wk||monday(),a==='wprev'?-7:7);render()}
+  else if(a==='wtoday'){ui.wk=monday();render();scrollNow()}
+  else if(a==='evnew'){openEd({d:b.dataset.k||today(),a:b.dataset.t||'09:00'})}
+  else if(a==='evopen'){const e=S.events.find(x=>x.id===id);if(e)openEd(e,b.dataset.k)}
+  else if(a==='edclose'){ui.ed=null;render()}
+  else if(a==='eddelone'&&ui.ed){const e=S.events.find(x=>x.id===ui.ed.id);if(e){e.ex=e.ex||[];e.ex.push(ui.ed.k);ui.ed=null;save();toast('Удалено только в этот день')}}
+  else if(a==='eddel'&&ui.ed){const i=ui.ed.id;ui.ed=null;remove('events',i,'Событие удалено')}
   else if(a==='pon'&&p){p.on=!p.on;save()}
   else if(a==='pg'&&p){p.goal=Math.max(0,Math.min(14,(p.goal||0)+ +b.dataset.d));save()}
   else if(a==='pdel'&&p)remove('projects',id,'Проект удалён');
@@ -487,8 +584,14 @@ document.addEventListener('submit',e=>{
   e.preventDefault();const f=e.target;
   if(f.id==='lf'){const em=$('#le').value.trim(),m=$('#lmsg');if(!em||!sb)return;m.textContent='Отправляю…';
     sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname}}).then(({error})=>{m.textContent=error?'Не получилось: '+error.message:'Готово! Открой письмо на этом устройстве и нажми на ссылку.'});return}
+  if(f.id==='evf'){readEd();const E=ui.ed;if(!E||!E.t.trim())return;if(E.b<=E.a){toast('Конец должен быть позже начала');return}
+    let rep=null;if(E.r==='day')rep={r:'week',days:[0,1,2,3,4,5,6]};else if(E.r==='week'){if(!E.days.length){toast('Выбери хотя бы один день');return}rep={r:'week',days:E.days.sort()}}else if(E.r==='n')rep={r:'n',n:E.n};
+    if(rep&&E.until)rep.until=E.until;
+    const ex=E.id&&S.events.find(x=>x.id===E.id);
+    if(ex)Object.assign(ex,{t:E.t.trim(),d:E.d,a:E.a,b:E.b,rep});else S.events.push({id:uid(),t:E.t.trim(),d:E.d,a:E.a,b:E.b,rep,ex:[],done:{}});
+    ui.ed=null;save();toast(rep?'Сохранено · ↻ '+repText(rep):'Сохранено');return}
   if(f.id==='tf'){const v=$('#tt').value.trim();if(!v)return;let dd=($('#td')||{}).value||today();if(dd<today())dd=today();S.tasks.push({id:uid(),t:v,w:wOf(f,'tw'),p:null,s:'today',d:dd,done:'',o:0});save();if(dd>today())toast('Запланировано: '+human(dd));$('#tt').focus()}
-  else if(f.id==='bf'){const a=$('#ba').value,b=$('#bb').value,v=$('#bt').value.trim();if(!a||!b||!v)return;if(b<=a){toast('Конец должен быть позже начала');return}S.blocks.push({id:uid(),d:today(),a,b,t:v,x:false});save();const d=document.querySelector('details.tl');if(d)d.open=true}
+  else if(f.id==='bf'){const a=$('#ba').value,b=$('#bb').value,v=$('#bt').value.trim();if(!a||!b||!v)return;if(b<=a){toast('Конец должен быть позже начала');return}S.events.push({id:uid(),d:today(),a,b,t:v,rep:null,ex:[],done:{}});save();const d=document.querySelector('details.tl');if(d)d.open=true}
   else if(f.id==='inf'){const L=$('#int').value.split('\n').map(s=>s.trim()).filter(Boolean);if(!L.length)return;L.forEach(v=>S.tasks.push({id:uid(),t:v.slice(0,200),w:2,p:null,s:'inbox',d:'',done:'',o:0}));save();toast(L.length===1?'Выгружено':'Выгружено: '+L.length);$('#int').focus()}
   else if(f.id==='pf'){const v=$('#pt').value.trim();if(!v)return;const used=S.projects.map(p=>p.c);let c=0;while(used.includes(c)&&c<PAL.length)c++;S.projects.push({id:uid(),t:v,c:c%PAL.length,on:S.projects.filter(p=>p.on).length<4,goal:2});save()}
   else if(f.id==='plf'){const v=$('#plt').value.trim();if(!v)return;const days=[...f.querySelectorAll('input[name=pld]:checked')].map(x=>+x.value);
@@ -505,9 +608,13 @@ document.addEventListener('input',e=>{
     const wc=$('#dwc');if(wc){const n=(el.value.match(/\S+/g)||[]).length;wc.textContent=n?n+' сл.':''}}
   if(el.id==='dq'){ui.dq=el.value;const L=$('#dlist');if(L)L.innerHTML=diaryList()}
 });
+document.addEventListener('change',e=>{if(e.target.id==='edr'){readEd();render();const s2=$('#edr');if(s2)s2.focus()}});
+document.addEventListener('click',e=>{const c=e.target.closest('.cg-col');if(!c||e.target.closest('.ev'))return;const r=c.getBoundingClientRect(),m=Math.floor(((e.clientY-r.top)/HPX+(ui.h0||0))*2)/2;
+  openEd({d:c.dataset.k,a:pad(Math.floor(m))+':'+(m%1?'30':'00')})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.ed){ui.ed=null;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='dpick'&&e.target.value){ui.dk=e.target.value>today()?today():e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target.id!=='imp'||!e.target.files[0])return;e.target.files[0].text().then(txt=>{const d=JSON.parse(txt);if(!d||!Array.isArray(d.tasks))throw 0;S=migrate(d);S.updated=0;save();toast('Данные импортированы')}).catch(()=>toast('Это не файл планера'))});
-window.addEventListener('hashchange',()=>{ui.pick=null;render();scrollTo(0,0)});
+window.addEventListener('hashchange',()=>{if(location.hash==='#calendar')scrollNow();ui.pick=null;render();scrollTo(0,0)});
 
 setInterval(()=>{
   const f=S.focus;
@@ -520,7 +627,7 @@ setInterval(()=>{
   if(nowHM()!==lastMin&&!busy)render();
 },1000);
 
-render();
+render();if(view()==='calendar')scrollNow();
 
 /* ---------- Supabase: вход по почте и синхронизация ---------- */
 async function pull(){
