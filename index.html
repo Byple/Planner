@@ -46,8 +46,9 @@ h2 small{font:500 14px 'Golos Text',sans-serif;color:var(--mute)}
 .ring{position:relative;width:128px;height:128px;flex:none}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:11}
+.ring .fg2{stroke:var(--acc);stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.3,1.3,.5,1)}
 .ring .tr{stroke:var(--st)}.ring .fg{stroke:var(--si);stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.3,1.3,.5,1)}
-.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 28px/1 var(--hd);letter-spacing:-.02em}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 22px/1 var(--hd);letter-spacing:-.02em}
 .chip{white-space:nowrap;display:inline-flex;align-items:center;gap:4px;background:var(--st);border-radius:99px;padding:2px 4px 2px 12px;font-size:14px;font-weight:600;margin-top:12px}
 .chip .ic{color:inherit}
 .card{background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)}
@@ -113,7 +114,7 @@ summary{font:700 17px/1.25 var(--hd);cursor:pointer;min-height:44px;display:flex
 .tl time{font:700 15px var(--hd);width:54px;flex:none}
 .tl .cur{box-shadow:0 0 0 2px var(--acc)}
 .big{font:700 clamp(52px,14vw,76px)/1 var(--hd);letter-spacing:-.03em;margin-top:4px}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
 .stats div{background:var(--card);border-radius:16px;padding:12px;box-shadow:var(--shadow)}
 .stats b{display:block;font:700 22px/1.1 var(--hd)}.stats span{font-size:13px;color:var(--mute)}
 .year{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}
@@ -176,12 +177,20 @@ textarea.diary{min-height:45vh;margin-top:12px;font-size:17px;line-height:1.65;p
 .swatches span{display:block;width:30px;height:30px;border-radius:50%;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25)}
 .swatches input:checked+span{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
 .swatches input:focus-visible+span{outline:3px solid var(--acc);outline-offset:4px}
+.legend2{display:flex;gap:14px;font-size:14px;font-weight:600;margin-top:8px;flex-wrap:wrap}
+.legend2 span,.split span{display:inline-flex;align-items:center;gap:6px}
+.lt,.lr{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--si,var(--ink))}.lr{background:var(--acc)}
+.split{display:flex;gap:28px;flex-wrap:wrap;margin:10px 0 4px}.split div{display:flex;align-items:baseline;gap:8px}.split b{font:700 22px var(--hd)}.split span{color:var(--mute);font-size:14px}
+.split .lt{background:var(--ink)}
+.nudge{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--acc) 18%,var(--card));border-radius:16px;padding:12px 14px;margin-top:20px}
+.ymseg{margin-top:14px;max-width:360px}.ymseg button{flex:1;min-height:36px;border-radius:10px;font-size:14px;color:var(--mute)}.ymseg button.on{background:var(--ink);color:var(--bg)}
 .btnl{display:inline-grid;place-items:center;border-radius:12px;cursor:pointer;font-weight:600}
 body.login nav.tabs{display:none}
 .foot{color:var(--mute);font-size:13px;margin:36px 0 24px}
 .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 6px 6px 16px;border-radius:16px;display:flex;gap:10px;align-items:center;max-width:calc(100% - 32px);z-index:9;font-size:15px;font-weight:500}
 .toast[hidden]{display:none}.toast button{color:var(--acc)}
-@media(max-width:480px){.ring{width:108px;height:108px}.ring b{font-size:24px}.year{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.ring{width:112px;height:112px}.ring b{font-size:19px}.year{grid-template-columns:repeat(2,minmax(0,1fr))}}
 summary small{font:500 14px 'Golos Text',sans-serif;color:var(--mute);margin-left:10px}
 .brand{display:none}
 @media(min-width:1000px){
@@ -195,7 +204,7 @@ summary small{font:500 14px 'Golos Text',sans-serif;color:var(--mute);margin-lef
   nav.tabs a.on::after{margin-left:auto;width:6px;height:6px}
   .toast{bottom:24px;left:calc(50% + 114px)}
   .cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:40px;align-items:start}
-  .ring{width:140px;height:140px}.ring b{font-size:30px}
+  .ring{width:150px;height:150px}.ring b{font-size:26px}
   h1{font-size:36px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -275,12 +284,17 @@ const nextStep=pid=>steps(pid).find(t=>t.s==='later');
 const weekDone=pid=>S.tasks.filter(t=>t.p===pid&&t.s==='done'&&t.done>=monday()).length;
 const view=()=>({'#calendar':'calendar','#projects':'projects','#inbox':'inbox','#diary':'diary','#review':'review'})[location.hash]||'today';
 
+/* two separate metrics: tasks and routine. Day total = their average,
+   minus half of the gap beyond 30 points (so routine can't carry the day alone) */
+const combine=(T,R)=>Math.max(0,Math.round((T+R)/2-Math.max(0,Math.abs(T-R)-30)/2));
 function score(k){
-  let p=0,e=0;const L=S.rlog[k]||{};
-  S.routines.forEach(r=>{p+=r.w;if(L[r.id]==='full')e+=r.w;else if(L[r.id]==='min')e+=r.w/2});
-  S.tasks.forEach(t=>{if((t.s==='today'&&t.d===k)||(t.s==='done'&&t.done===k)){p+=t.w;if(t.s==='done')e+=t.w}});
-  return{e,p};
+  let rp=0,re=0,tp=0,te=0;const L=S.rlog[k]||{};
+  S.routines.forEach(r=>{rp+=r.w;if(L[r.id]==='full')re+=r.w;else if(L[r.id]==='min')re+=r.w/2});
+  S.tasks.forEach(t=>{if((t.s==='today'&&t.d===k)||(t.s==='done'&&t.done===k)){tp+=t.w;if(t.s==='done')te+=t.w}});
+  const T=tp?Math.round(te/tp*100):100,R=rp?Math.round(re/rp*100):100;
+  return{e:te+re,p:tp+rp,te,tp,re,rp,T,R,tot:(tp||rp)?combine(T,R):null};
 }
+const pctOf=x=>!x?null:x.tot!==undefined?x.tot:(x.p?Math.round(x.e/x.p*100):null);
 function prune(){
   const lim=dk(new Date(Date.now()-90*864e5));
   S.tasks=S.tasks.filter(t=>!(t.s==='done'&&t.done<lim));
@@ -311,7 +325,7 @@ const seg=(name,sel=2)=>`<div class="seg" role="radiogroup" aria-label="Слож
 
 /* ---------- Сегодня ---------- */
 function skyHTML(){
-  const{e,p}=score(today()),pc=p?Math.round(e/p*100):0,C=2*Math.PI*56;
+  const sc=score(today()),pc=sc.tot,C=2*Math.PI*56,C2=2*Math.PI*41;
   const now=new Date(),d=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
   const h=now.getHours(),m=h*60+now.getMinutes();
   const ph=h<5?'night':h<11?'morning':h<17?'day':h<22?'evening':'night';
@@ -322,8 +336,8 @@ function skyHTML(){
   const body=`<span class="${isSun?'sun':'moon'}" style="left:${x}%;top:${6+y/60*130}px"></span>`;
   return `<section class="sky ${ph}"><svg class="arc" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 58 A44 50 0 0 1 94 58" vector-effect="non-scaling-stroke"/></svg>
   ${body}
-  <div class="wrap hero"><div><h1>${hi}</h1><div class="sub">${d.charAt(0).toUpperCase()+d.slice(1)}</div>${energyChip()}</div>
-  <div class="ring" role="img" aria-label="Выполнено ${pc} процентов"><svg viewBox="0 0 140 140"><circle class="tr" cx="70" cy="70" r="56"/><circle class="fg" cx="70" cy="70" r="56" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-Math.min(pc,100)/100)}"/></svg><b>${p?pc+'%':'–'}</b></div></div></section>`;
+  <div class="wrap hero"><div><h1>${hi}</h1><div class="sub">${d.charAt(0).toUpperCase()+d.slice(1)}</div>${pc!==null?`<div class="legend2"><span><i class="lt"></i>Дела ${sc.T}%</span><span><i class="lr"></i>Рутина ${sc.R}%</span></div>`:''}${energyChip()}</div>
+  <div class="ring" role="img" aria-label="День ${pc??0}%: дела ${sc.T}%, рутина ${sc.R}%"><svg viewBox="0 0 140 140"><circle class="tr" cx="70" cy="70" r="56"/><circle class="fg" cx="70" cy="70" r="56" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-(pc===null?0:sc.T)/100)}"/><circle class="tr" cx="70" cy="70" r="41"/><circle class="fg2" cx="70" cy="70" r="41" stroke-dasharray="${C2}" stroke-dashoffset="${C2*(1-(pc===null?0:sc.R)/100)}"/></svg><b>${pc!==null?pc+'%':'–'}</b></div></div></section>`;
 }
 function energyChip(){
   const en=day(today()).en;if(!en||ui.eedit)return'';
@@ -352,6 +366,9 @@ function todayHTML(){
   const T=todayTasks().sort((a,b)=>(a.s==='done')-(b.s==='done')||(a.ot??999)-(b.ot??999)||b.w-a.w),L=S.rlog[today()]||{},TL=tails();
   let h=`${skyHTML()}<div class="wrap">${morningHTML()}${focusHTML()}`;
   let A='',Z='';
+  {const sc=score(today()),open=T.filter(t=>t.s!=='done');
+   if(!S.focus&&sc.tp&&sc.rp&&sc.R-sc.T>=40&&new Date().getHours()>=12&&open.length)
+     A+=`<div class="nudge"><div><b>Рутина идёт отлично: ${sc.R}%.</b> А дела пока на ${sc.T}%. Возьмёшь одно?</div><button class="pri sm" data-a="go" data-id="${open[0].id}" data-m="10">10 минут: ${esc(open[0].t.length>34?open[0].t.slice(0,34)+'…':open[0].t)}</button></div>`}
   A+=`<h2>Дела на сегодня</h2><div class="stack">${T.map(taskItem).join('')||'<p class="hint">Пока пусто. Впиши своё или возьми шаг из проектов ниже.</p>'}</div>
   <form class="add" id="tf"><div class="r"><input id="tt" placeholder="Что важно сделать" maxlength="160" required><input type="date" id="td" value="${today()}" min="${today()}" aria-label="Когда" style="flex:0 0 auto;width:auto"></div><div class="r">${seg('tw')}<button class="pri">Добавить</button></div></form>`;
   const FU=S.tasks.filter(t=>t.s==='today'&&t.d>today()&&!t.pl).sort((a,b)=>a.d<b.d?-1:1);
@@ -402,11 +419,13 @@ function inboxHTML(){
 
 /* ---------- Итоги ---------- */
 function reviewHTML(){
-  const k=today(),{e,p}=score(k),pc=p?Math.round(e/p*100):0,dd=day(k);
+  const k=today(),sc=score(k),pc=sc.tot,dd=day(k),ym=ui.ym||'tot';
   const D=[...S.tasks.filter(t=>t.s==='done'&&t.done===k).map(t=>t.t),...S.routines.filter(r=>(S.rlog[k]||{})[r.id]).map(r=>r.t+((S.rlog[k]||{})[r.id]==='min'?' (минимум)':''))];
-  const pct=kk=>{const x=kk===k?{e,p}:(S.days[kk]||{});return x.p?Math.round(x.e/x.p*100):null};
+  const dayX=kk=>kk===k?sc:(S.days[kk]||{});
+  const pct=kk=>pctOf(dayX(kk));
+  const met=(kk,m)=>{const x=dayX(kk);return m==='t'?(x.T??null):m==='r'?(x.R??null):pctOf(x)};
   const back=n=>{const d=new Date();d.setDate(d.getDate()-n);return dk(d)};
-  const avgOf=n=>{const v=[...Array(n)].map((_,i)=>pct(back(i))).filter(x=>x!==null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length)+'%':'–'};
+  const avgOf=(n,m='tot')=>{const v=[...Array(n)].map((_,i)=>met(back(i),m)).filter(x=>x!==null&&x!==undefined);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length)+'%':'–'};
   let streak=0;for(let i=pct(k)===null||pct(k)<50?1:0;i<800;i++){const v=pct(back(i));if(v!==null&&v>=50)streak++;else break}
   const lvl=v=>v===null?'':v>=80?'l4':v>=60?'l3':v>=40?'l2':v>=20?'l1':'l0';
   const now=new Date();let months='';
@@ -414,24 +433,27 @@ function reviewHTML(){
     let g='<i></i>'.repeat((f.getDay()+6)%7);
     for(let dd2=1;dd2<=n;dd2++){const kk=dk(new Date(f.getFullYear(),f.getMonth(),dd2));
       if(kk>k){g+='<i></i>';continue}
-      const v=pct(kk);g+=`<button class="${lvl(v)}${kk===k?' t':''}${ui.sel===kk?' sel':''}" data-a="dsel" data-k="${kk}" aria-label="${kk}${v===null?'':': '+v+'%'}"></button>`}
+      const v=met(kk,ym);g+=`<button class="${lvl(v)}${kk===k?' t':''}${ui.sel===kk?' sel':''}" data-a="dsel" data-k="${kk}" aria-label="${kk}${v===null?'':': '+v+'%'}"></button>`}
     months+=`<div class="mo"><b>${f.toLocaleDateString('ru-RU',{month:'long'})}${f.getMonth()===11||i===0?' '+f.getFullYear():''}</b><div class="g">${g}</div></div>`}
   let det='';
   if(ui.sel){const x=S.days[ui.sel]||{},v=pct(ui.sel),dl=new Date(ui.sel+'T12:00').toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-    det=`<div class="card" style="margin-top:14px"><b>${dl.charAt(0).toUpperCase()+dl.slice(1)}</b><div>${v===null?'Нет данных':v+'%'}${x.en?' · силы '+x.en+'/5':''}${x.mood?' · самочувствие '+x.mood+'/5':''}</div>${x.note?`<p class="hint" style="margin-bottom:0">${esc(x.note)}</p>`:''}</div>`}
-  return `<div class="wrap"><h2 style="margin-top:22px">Итоги дня</h2><div class="big">${p?pc+'%':'–'}</div><p class="hint">${+e.toFixed(1)} из ${p} баллов${dd.en?' · силы были '+dd.en+'/5':''}</p>
+    det=`<div class="card" style="margin-top:14px"><b>${dl.charAt(0).toUpperCase()+dl.slice(1)}</b><div>${v===null?'Нет данных':v+'%'}${x.T!==undefined?` · дела ${x.T}% · рутина ${x.R}%`:''}${x.en?' · силы '+x.en+'/5':''}${x.mood?' · самочувствие '+x.mood+'/5':''}</div>${x.note?`<p class="hint" style="margin-bottom:0">${esc(x.note)}</p>`:''}</div>`}
+  return `<div class="wrap"><h2 style="margin-top:22px">Итоги дня</h2><div class="big">${pc!==null?pc+'%':'–'}</div>
+  <div class="split"><div><i class="lt"></i><b>${sc.T}%</b><span>дела${sc.tp?` · ${+sc.te.toFixed(1)} из ${sc.tp}`:' · не запланированы'}</span></div><div><i class="lr"></i><b>${sc.R}%</b><span>рутина${sc.rp?` · ${+sc.re.toFixed(1)} из ${sc.rp}`:''}</span></div></div>
+  ${pc!==null&&Math.abs(sc.T-sc.R)>30?`<p class="hint">Перекос ${Math.abs(sc.T-sc.R)} пунктов: штраф −${Math.round((sc.T+sc.R)/2)-pc}%.</p>`:''}${dd.en?`<p class="hint">Силы были ${dd.en}/5</p>`:''}
   ${D.length?`<div class="card"><b>Сделано</b>${D.map(x=>`<div>✓ ${esc(x)}</div>`).join('')}</div>`:''}
   <h2>Как ощущался день?</h2><div class="energy">${[1,2,3,4,5].map(n=>`<button data-a="mood" data-n="${n}" class="${dd.mood===n?'on':''}">${n}</button>`).join('')}</div><div class="elab"><span>тяжело</span><span>отлично</span></div>
   <textarea class="dnote" data-k="${k}" rows="3" placeholder="Что получилось, что мешало, что взять на завтра" style="margin-top:10px">${esc(dd.note||'')}</textarea>
   <p class="hint">Это та же запись, что в <a href="#diary">дневнике</a> за сегодня.</p>
-  <h2>Год</h2><div class="stats"><div><b>${avgOf(7)}</b><span>в среднем за неделю</span></div><div><b>${avgOf(30)}</b><span>за месяц</span></div><div><b>${streak}</b><span>дней подряд от 50%</span></div></div>
+  <h2>Год</h2><div class="stats"><div><b>${avgOf(7,'t')}</b><span>дела за неделю</span></div><div><b>${avgOf(7,'r')}</b><span>рутина за неделю</span></div><div><b>${avgOf(30)}</b><span>день в среднем за месяц</span></div><div><b>${streak}</b><span>дней подряд от 50%</span></div></div>
+  <div class="seg ymseg" role="group" aria-label="Что показывать на карте">${[['tot','Общий'],['t','Дела'],['r','Рутина']].map(([m,l])=>`<button class="${ym===m?'on':''}" data-a="ym" data-m="${m}">${l}</button>`).join('')}</div>
   <div class="year" style="margin-top:18px">${months}</div>
   <div class="legend">меньше <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> 80% и выше</div>
   ${det}
   <p class="hint">Нажми на день, чтобы увидеть детали. Со временем сравни проценты с силами и самочувствием: так видно, что на самом деле влияет на твои дни.</p>
   <h2>Данные</h2><div class="card">${user?`Вход: ${esc(user.email)}<br><span class="hint">${cloud?'Синхронизируется между устройствами':'Нет связи с базой, данные сохраняются локально'}</span>`:'Без входа: данные только в этом браузере'}
   <div class="row">${user?'<button class="soft sm" data-a="logout">Выйти</button>':(sb?'<button class="soft sm" data-a="login">Войти</button>':'')}<button class="soft sm" data-a="export">Экспорт</button><label class="soft sm btnl">Импорт<input type="file" id="imp" accept=".json,application/json" hidden></label></div></div>
-  <p class="foot">Процент считается по баллам: лёгкая задача 1, средняя 2, сложная 3, минимум рутины — половина.</p></div>`;
+  <p class="foot">Дела и рутина считаются отдельно по баллам: лёгкая 1, средняя 2, сложная 3, минимум рутины — половина. Если дел нет, дела = 100%. Процент дня — среднее двух, минус половина разрыва сверх 30 пунктов. Раздельная статистика копится с 17 ноября 2026.</p></div>`;
 }
 
 /* ---------- Календарь ---------- */
@@ -559,6 +581,7 @@ document.addEventListener('click',e=>{
   else if(a==='dtoday'){ui.dk=today();render()}
   else if(a==='dgo'){ui.dk=b.dataset.k;render();scrollTo({top:0,behavior:'smooth'})}
   else if(a==='dmood'){const d=day(ui.dk||today()),n=+b.dataset.n;d.mood=d.mood===n?undefined:n;if(!d.mood)delete d.mood;save()}
+  else if(a==='ym'){ui.ym=b.dataset.m;render()}
   else if(a==='dsel'){ui.sel=ui.sel===b.dataset.k?null:b.dataset.k;render()}
   else if(a==='mood'){day(today()).mood=+b.dataset.n;save()}
   else if(a==='pick'){ui.pick=ui.pick===id?null:id;render()}
