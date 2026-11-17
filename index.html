@@ -248,7 +248,7 @@ try{const r=localStorage.getItem(K);if(r)S=migrate(JSON.parse(r))}catch(e){}
 const SB_URL='https://pnukkzddmmjjnghumahg.supabase.co',SB_KEY='sb_publishable_DIRkmw4ROxm2M4UHypZCjg_ZzcR3esX';
 let sb=null,user=null,authReady=false;try{sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){}
 let cloud=false,writing=false,dirty=false,saveT=null,toastT=null,actx=null,lastMin='';
-const ui={wk:null,ed:null,h0:7,dk:null,dq:'',pick:null,undo:null,eedit:false,sel:null,skip:(()=>{try{return localStorage.getItem('planner-skip')==='1'}catch(e){return false}})()};
+const ui={ie:null,wk:null,ed:null,h0:7,dk:null,dq:'',pick:null,undo:null,eedit:false,sel:null,skip:(()=>{try{return localStorage.getItem('planner-skip')==='1'}catch(e){return false}})()};
 
 const today=()=>dk();
 const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
@@ -357,7 +357,7 @@ function focusHTML(){
 function taskItem(t){
   const x=t.s==='done',p=proj(t.p);
   let h=`<div class="item${x?' x':''}${p?' pj" style="--pc:'+PAL[p.c%PAL.length]:''}"${x?'':` draggable="true" data-drag="task" data-id="${t.id}"`}>${x?'':'<span class="grip" aria-hidden="true">⋮⋮</span>'}<button class="chk${x?' on':''}" data-a="tdone" data-id="${t.id}" aria-label="Сделано"></button><span class="tt">${esc(t.t)}<small>${tag(p)}${dots(t.w)}${t.pl?`<span class="w">↻ ${esc(ruleText(S.plans.find(x=>x.id===t.pl)))}</span>`:''}</small></span>`;
-  if(!x)h+=`<button class="ic" data-a="pick" data-id="${t.id}" aria-label="Фокус">▶</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="${t.pl?'Пропустить сегодня':'Убрать из сегодня'}">${t.pl?'⤼':'↩'}</button>`;
+  if(!x)h+=`<button class="ic" data-a="edit" data-k="task" data-id="${t.id}" aria-label="Изменить">✎</button><button class="ic" data-a="pick" data-id="${t.id}" aria-label="Фокус">▶</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="${t.pl?'Пропустить сегодня':'Убрать из сегодня'}">${t.pl?'⤼':'↩'}</button>`;
   h+='</div>';
   if(ui.pick===t.id)h+=`<div class="row" style="margin:0 0 4px 44px"><span class="hint" style="margin:0">Минут:</span>${[10,25,45].map(m=>`<button class="soft sm" data-a="go" data-id="${t.id}" data-m="${m}">${m}</button>`).join('')}</div>`;
   return h;
@@ -372,8 +372,8 @@ function todayHTML(){
   A+=`<h2>Дела на сегодня</h2><div class="stack">${T.map(taskItem).join('')||'<p class="hint">Пока пусто. Впиши своё или возьми шаг из проектов ниже.</p>'}</div>
   <form class="add" id="tf"><div class="r"><input id="tt" placeholder="Что важно сделать" maxlength="160" required><input type="date" id="td" value="${today()}" min="${today()}" aria-label="Когда" style="flex:0 0 auto;width:auto"></div><div class="r">${seg('tw')}<button class="pri">Добавить</button></div></form>`;
   const FU=S.tasks.filter(t=>t.s==='today'&&t.d>today()&&!t.pl).sort((a,b)=>a.d<b.d?-1:1);
-  if(FU.length)A+=`<details><summary>Запланировано · ${FU.length}</summary><div class="stack">${FU.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small><span>${human(t.d)}</span>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')}</div></details>`;
-  if(S.routines.length)Z+=`<h2>Рутина <small>минимум засчитывается наполовину</small></h2><div class="stack">${S.routines.map(r=>{const v=L[r.id];return `<div class="item rt${v==='full'?' x':''}" draggable="true" data-drag="rt" data-id="${r.id}"><span class="grip" aria-hidden="true">⋮⋮</span><button class="chk${v==='full'?' on':v==='min'?' half':''}" data-a="rfull" data-id="${r.id}" aria-label="Сделано полностью"></button><span class="tt">${esc(r.t)}<small>${dots(r.w)}${r.min?' · минимум: '+esc(r.min):''}</small></span>${r.min?`<button class="mn${v==='min'?' on':''}" data-a="rmin" data-id="${r.id}">минимум</button>`:''}</div>`}).join('')}</div>`;
+  if(FU.length)A+=`<details><summary>Запланировано · ${FU.length}</summary><div class="stack">${FU.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small><span>${human(t.d)}</span>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button><button class="ic" data-a="edit" data-k="task" data-id="${t.id}" aria-label="Изменить">✎</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')}</div></details>`;
+  if(S.routines.length)Z+=`<h2>Рутина <small>минимум засчитывается наполовину</small></h2><div class="stack">${S.routines.map(r=>{const v=L[r.id];return `<div class="item rt${v==='full'?' x':''}" draggable="true" data-drag="rt" data-id="${r.id}"><span class="grip" aria-hidden="true">⋮⋮</span><button class="chk${v==='full'?' on':v==='min'?' half':''}" data-a="rfull" data-id="${r.id}" aria-label="Сделано полностью"></button><span class="tt">${esc(r.t)}<small>${dots(r.w)}${r.min?' · минимум: '+esc(r.min):''}</small></span>${r.min?`<button class="mn${v==='min'?' on':''}" data-a="rmin" data-id="${r.id}">минимум</button>`:''}<button class="ic" data-a="edit" data-k="rt" data-id="${r.id}" aria-label="Изменить">✎</button></div>`}).join('')}</div>`;
   else Z+=`<h2>Рутина</h2><p class="hint">Ежедневные дела добавляются во вкладке <a href="#projects">Проекты</a>.</p>`;
   const act=S.projects.filter(p=>p.on).map(p=>({p,n:nextStep(p.id),lag:(p.goal||0)-weekDone(p.id)})).filter(x=>x.n).sort((a,b)=>b.lag-a.lag);
   const en=day(today()).en,k=en?(en<=2?1:en<=3?2:3):null;
@@ -392,17 +392,17 @@ function projectsHTML(){
   if(!S.projects.length)h+=`<p class="hint">Проект — это большая цель, которую ты двигаешь маленькими шагами. На главной видно только следующий шаг.</p>`;
   h+=S.projects.map(p=>{const St=steps(p.id),N=nextStep(p.id),wd=weekDone(p.id);
     return `<div class="proj${p.on?'':' off'}" style="--pc:${PAL[p.c%PAL.length]}"><div class="ph"><h3>${esc(p.t)}</h3>
-    <button class="sm ${p.on?'pri':'soft'}" data-a="pon" data-id="${p.id}">${p.on?'В работе':'На паузе'}</button><button class="ic" data-a="pdel" data-id="${p.id}" aria-label="Удалить проект">✕</button>
+    <button class="sm ${p.on?'pri':'soft'}" data-a="pon" data-id="${p.id}">${p.on?'В работе':'На паузе'}</button><button class="ic" data-a="edit" data-k="proj" data-id="${p.id}" aria-label="Изменить">✎</button><button class="ic" data-a="pdel" data-id="${p.id}" aria-label="Удалить проект">✕</button>
     <div class="meta row" style="margin:2px 0 0"><span>На неделе: ${wd} из</span><span class="stepper"><button data-a="pg" data-d="-1" data-id="${p.id}" aria-label="Меньше">−</button><span>${p.goal||0}</span><button data-a="pg" data-d="1" data-id="${p.id}" aria-label="Больше">+</button></span><span>шагов</span></div></div>
-    <div class="stack" style="margin-top:10px">${St.filter(t=>t.s!=='done'||t.done>=monday()).map(t=>{const x=t.s==='done';return `<div class="item pj${x?' x':''}${N&&N.id===t.id?' next':''}"><button class="chk${x?' on':''}" data-a="tdone" data-id="${t.id}" aria-label="Сделано"></button><span class="tt">${esc(t.t)}<small>${N&&N.id===t.id?'следующий · ':''}${t.s==='today'?'в сегодня · ':''}<button class="w" data-a="tw" data-id="${t.id}" aria-label="Сменить сложность">×${t.w}</button></small></span>${x?'':`${t.s==='later'?`<button class="ic" data-a="totop" data-id="${t.id}" aria-label="Сделать следующим">↑</button><button class="soft sm" data-a="totoday" data-id="${t.id}">+ сегодня</button>`:''}<button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button>`}</div>`}).join('')}</div>
+    <div class="stack" style="margin-top:10px">${St.filter(t=>t.s!=='done'||t.done>=monday()).map(t=>{const x=t.s==='done';return `<div class="item pj${x?' x':''}${N&&N.id===t.id?' next':''}"><button class="chk${x?' on':''}" data-a="tdone" data-id="${t.id}" aria-label="Сделано"></button><span class="tt">${esc(t.t)}<small>${N&&N.id===t.id?'следующий · ':''}${t.s==='today'?'в сегодня · ':''}<button class="w" data-a="tw" data-id="${t.id}" aria-label="Сменить сложность">×${t.w}</button></small></span>${x?'':`${t.s==='later'?`<button class="ic" data-a="totop" data-id="${t.id}" aria-label="Сделать следующим">↑</button><button class="soft sm" data-a="totoday" data-id="${t.id}">+ сегодня</button>`:''}<button class="ic" data-a="edit" data-k="task" data-id="${t.id}" aria-label="Изменить">✎</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button>`}</div>`}).join('')}</div>
     <form class="add" data-f="sf" data-id="${p.id}"><div class="r"><input name="t" placeholder="Новый шаг: маленький и конкретный" maxlength="160" required></div><div class="r">${seg('sw-'+p.id)}<button class="pri sm">Шаг</button></div></form></div>`}).join('');
   h+=`<form class="add card" id="pf"><b>Новый проект</b><div class="r"><input id="pt" placeholder="Например: Гражданство" maxlength="60" required><button class="pri">Создать</button></div></form>`;
-  h+=`<h2>Повторяющиеся задачи <small>появляются сами в нужные дни</small></h2><div class="stack">${S.plans.map(pl=>`<div class="item"><span class="tt">${esc(pl.t)}<small><span class="w">↻ ${esc(ruleText(pl))}</span>${dots(pl.w)}</small></span><button class="ic" data-a="pldel" data-id="${pl.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Например: «Тренировка» по Пн, Ср, Пт или «Полить цветы» через день.</p>'}</div>
+  h+=`<h2>Повторяющиеся задачи <small>появляются сами в нужные дни</small></h2><div class="stack">${S.plans.map(pl=>`<div class="item"><span class="tt">${esc(pl.t)}<small><span class="w">↻ ${esc(ruleText(pl))}</span>${dots(pl.w)}</small></span><button class="ic" data-a="edit" data-k="plan" data-id="${pl.id}" aria-label="Изменить">✎</button><button class="ic" data-a="pldel" data-id="${pl.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Например: «Тренировка» по Пн, Ср, Пт или «Полить цветы» через день.</p>'}</div>
   <form class="add" id="plf"><div class="r"><input id="plt" placeholder="Что повторять" maxlength="120" required></div>
   <div class="chips" role="group" aria-label="Дни недели">${DN.map((d,i)=>`<label><input type="checkbox" name="pld" value="${i}"><span>${d}</span></label>`).join('')}</div>
   <div class="nrow">или каждые <input type="number" id="pln" min="1" max="30" value="2" aria-label="Каждые сколько дней"> дн. (2 = через день)</div>
   <div class="r">${seg('plw')}<button class="pri">Добавить</button></div></form>`;
-  h+=`<h2>Ежедневная рутина <small>баллы за сложность</small></h2><div class="stack">${S.routines.map(r=>`<div class="item"><span class="tt">${esc(r.t)}<small><button class="w" data-a="rw" data-id="${r.id}" aria-label="Сменить сложность">×${r.w}</button> ${WN[r.w-1].toLowerCase()}${r.min?' · минимум: '+esc(r.min):''}</small></span><button class="ic" data-a="rdel" data-id="${r.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Пока нет. Добавь то, что хочешь делать каждый день.</p>'}</div>
+  h+=`<h2>Ежедневная рутина <small>баллы за сложность</small></h2><div class="stack">${S.routines.map(r=>`<div class="item"><span class="tt">${esc(r.t)}<small><button class="w" data-a="rw" data-id="${r.id}" aria-label="Сменить сложность">×${r.w}</button> ${WN[r.w-1].toLowerCase()}${r.min?' · минимум: '+esc(r.min):''}</small></span><button class="ic" data-a="edit" data-k="rt" data-id="${r.id}" aria-label="Изменить">✎</button><button class="ic" data-a="rdel" data-id="${r.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Пока нет. Добавь то, что хочешь делать каждый день.</p>'}</div>
   <form class="add" id="rf"><div class="r"><input id="rt" placeholder="Например: Спорт 40 минут" maxlength="80" required><input id="rm" placeholder="Минимум (необязательно): 10 минут зарядки" maxlength="80"></div><div class="r">${seg('rw')}<button class="pri">Добавить</button></div></form>
   <p class="foot">Держи в работе 3–4 проекта. Пауза — это не провал, а осознанный выбор на эту неделю.</p></div>`;
   return h;
@@ -413,7 +413,7 @@ function inboxHTML(){
   const I=S.tasks.filter(t=>t.s==='inbox'),opts=S.projects.map(p=>`<option value="${p.id}">${esc(p.t)}</option>`).join('');
   return `<div class="wrap"><h2 style="margin-top:22px">Выгрузка из головы</h2>
   <form class="add" id="inf" style="margin-top:0"><textarea id="int" rows="3" placeholder="Всё, что крутится в голове. Одна мысль на строку."></textarea><div class="r"><button class="pri">Выгрузить</button></div></form>
-  <div class="stack" style="margin-top:14px">${I.map(t=>`<div class="item"><span class="tt">${esc(t.t)}</span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button>${opts?`<select data-c="mv" data-id="${t.id}" aria-label="В проект" style="width:auto;max-width:120px;font-size:14px;min-height:38px;padding:4px 8px"><option value="">В проект…</option>${opts}</select>`:''}<button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Пусто. Голова свободна или пора выгрузить?</p>'}</div>
+  <div class="stack" style="margin-top:14px">${I.map(t=>`<div class="item"><span class="tt">${esc(t.t)}</span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button>${opts?`<select data-c="mv" data-id="${t.id}" aria-label="В проект" style="width:auto;max-width:120px;font-size:14px;min-height:38px;padding:4px 8px"><option value="">В проект…</option>${opts}</select>`:''}<button class="ic" data-a="edit" data-k="task" data-id="${t.id}" aria-label="Изменить">✎</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')||'<p class="hint">Пусто. Голова свободна или пора выгрузить?</p>'}</div>
   <p class="foot">Выгрузка — не план. Здесь мысли ждут, пока ты решишь: сделать сегодня, отправить в проект или отпустить.</p></div>`;
 }
 
@@ -495,6 +495,25 @@ function openEd(e,k){
     r:!e.rep?'none':e.rep.r==='week'?(e.rep.days.length===7?'day':'week'):(e.rep.n===1?'day':'n'),days:e.rep&&e.rep.r==='week'?e.rep.days.slice():[dow(e.d)],n:e.rep&&e.rep.r==='n'?e.rep.n:2,until:e.rep&&e.rep.until||''};
   render();setTimeout(()=>{const i=$('#edt');if(i)i.focus()},0);
 }
+/* ---------- редактирование задач, проектов, рутины, повторов ---------- */
+function itemEdHTML(){
+  const M=ui.ie;if(!M)return'';
+  const o=M.k==='task'?S.tasks.find(x=>x.id===M.id):M.k==='proj'?S.projects.find(x=>x.id===M.id):M.k==='rt'?S.routines.find(x=>x.id===M.id):S.plans.find(x=>x.id===M.id);
+  if(!o){ui.ie=null;return''}
+  const T={task:'Задача',proj:'Проект',rt:'Рутина',plan:'Повторяющаяся задача'}[M.k];
+  let f=`<label class="fl">Название<input id="iet" required maxlength="160" value="${esc(o.t)}"></label>`;
+  if(M.k!=='proj')f+=`<div class="fl">Сложность${seg('iew',o.w)}</div>`;
+  if(M.k==='task'){
+    f+=`<label class="fl">Проект<select id="iep"><option value="">Без проекта</option>${S.projects.map(p=>`<option value="${p.id}"${p.id===o.p?' selected':''}>${esc(p.t)}</option>`).join('')}</select></label>`;
+    if(o.s==='today'&&!o.pl)f+=`<label class="fl">Дата<input type="date" id="ied" value="${o.d||today()}"></label>`;
+  }
+  if(M.k==='rt')f+=`<label class="fl">Минимум (необязательно)<input id="iem" maxlength="80" value="${esc(o.min)}"></label>`;
+  if(M.k==='proj')f+=`<div class="fl">Цвет<div class="swatches">${PAL.map((c,i)=>`<label><input type="radio" name="iec" value="${i}"${o.c%PAL.length===i?' checked':''}><span style="background:${c}"></span></label>`).join('')}</div></div>`;
+  if(M.k==='plan')f+=`<div class="fl">Дни недели<div class="chips">${DN.map((d,i)=>`<label><input type="checkbox" name="ied" value="${i}"${o.r==='week'&&o.days.includes(i)?' checked':''}><span>${d}</span></label>`).join('')}</div></div>
+    <div class="nrow">или каждые <input type="number" id="ien" min="1" max="30" value="${o.r==='n'?o.n:2}"> дн. (если дни не отмечены)</div>`;
+  return `<div class="modal" data-a="ieclose"><form class="sheet" id="ief" data-a="noop"><h2 style="margin-top:0">${T}</h2>${f}
+  <div class="row" style="justify-content:flex-end;margin-top:12px"><button type="button" class="sm" data-a="ieclose">Отмена</button><button class="pri">Сохранить</button></div></form></div>`;
+}
 function editorHTML(){
   const E=ui.ed;if(!E)return'';const ex=E.id&&S.events.find(x=>x.id===E.id),rec=ex&&ex.rep;
   return `<div class="modal" data-a="edclose"><form class="sheet" id="evf" data-a="noop" role="dialog" aria-label="Событие"><h2 style="margin-top:0">${E.id?'Событие':'Новое событие'}</h2>
@@ -547,7 +566,7 @@ function render(){
   if(lg){$('#app').innerHTML=loginHTML();return}
   const v=view();
   ['today','calendar','projects','inbox','diary','review'].forEach(x=>{const a=$('#n-'+x);a.className=x===v?'on':'';if(x===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  $('#app').innerHTML=(v==='calendar'?calHTML():v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML())+editorHTML();
+  $('#app').innerHTML=(v==='calendar'?calHTML():v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML())+editorHTML()+itemEdHTML();
   lastMin=nowHM();
 }
 
@@ -582,6 +601,8 @@ document.addEventListener('click',e=>{
   else if(a==='dgo'){ui.dk=b.dataset.k;render();scrollTo({top:0,behavior:'smooth'})}
   else if(a==='dmood'){const d=day(ui.dk||today()),n=+b.dataset.n;d.mood=d.mood===n?undefined:n;if(!d.mood)delete d.mood;save()}
   else if(a==='ym'){ui.ym=b.dataset.m;render()}
+  else if(a==='edit'){ui.ie={k:b.dataset.k,id};render();setTimeout(()=>{const i=$('#iet');if(i){i.focus();i.select()}},0)}
+  else if(a==='ieclose'){ui.ie=null;render()}
   else if(a==='dsel'){ui.sel=ui.sel===b.dataset.k?null:b.dataset.k;render()}
   else if(a==='mood'){day(today()).mood=+b.dataset.n;save()}
   else if(a==='pick'){ui.pick=ui.pick===id?null:id;render()}
@@ -619,6 +640,15 @@ document.addEventListener('submit',e=>{
   e.preventDefault();const f=e.target;
   if(f.id==='lf'){const em=$('#le').value.trim(),m=$('#lmsg');if(!em||!sb)return;m.textContent='Отправляю…';
     sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname}}).then(({error})=>{m.textContent=error?'Не получилось: '+error.message:'Готово! Открой письмо на этом устройстве и нажми на ссылку.'});return}
+  if(f.id==='ief'&&ui.ie){const M=ui.ie,v=$('#iet').value.trim();if(!v)return;
+    if(M.k==='task'){const t=S.tasks.find(x=>x.id===M.id);t.t=v;t.w=wOf(f,'iew');const np=$('#iep').value||null;if(np!==t.p){t.p=np;if(np&&t.s==='inbox'){t.s='later';t.o=maxO(np)+1}}const dd=$('#ied');if(dd&&dd.value)t.d=dd.value<today()?today():dd.value}
+    else if(M.k==='proj'){const p=S.projects.find(x=>x.id===M.id);p.t=v;const c=f.querySelector('input[name=iec]:checked');if(c)p.c=+c.value}
+    else if(M.k==='rt'){const r=S.routines.find(x=>x.id===M.id);r.t=v;r.w=wOf(f,'iew');r.min=$('#iem').value.trim()}
+    else{const pl=S.plans.find(x=>x.id===M.id),days=[...f.querySelectorAll('input[name=ied]:checked')].map(x=>+x.value);pl.t=v;pl.w=wOf(f,'iew');
+      if(days.length){pl.r='week';pl.days=days.sort();delete pl.n}else{pl.r='n';pl.n=Math.max(1,Math.min(30,parseInt($('#ien').value)||1));delete pl.days}
+      S.tasks.forEach(t=>{if(t.pl===pl.id&&t.s==='today'&&t.d===today()){t.t=pl.t;t.w=pl.w}});
+      S.tasks=S.tasks.filter(t=>!(t.pl===pl.id&&t.s==='today'&&t.d===today()&&!planHits(pl,today())))}
+    ui.ie=null;save();toast('Сохранено');return}
   if(f.id==='evf'){readEd();const E=ui.ed;if(!E||!E.t.trim())return;if(E.b<=E.a){toast('Конец должен быть позже начала');return}
     let rep=null;if(E.r==='day')rep={r:'week',days:[0,1,2,3,4,5,6]};else if(E.r==='week'){if(!E.days.length){toast('Выбери хотя бы один день');return}rep={r:'week',days:E.days.sort()}}else if(E.r==='n')rep={r:'n',n:E.n};
     if(rep&&E.until)rep.until=E.until;
@@ -646,7 +676,7 @@ document.addEventListener('input',e=>{
 document.addEventListener('change',e=>{if(e.target.id==='edr'){readEd();render();const s2=$('#edr');if(s2)s2.focus()}});
 document.addEventListener('click',e=>{const c=e.target.closest('.cg-col');if(!c||e.target.closest('.ev'))return;const r=c.getBoundingClientRect(),m=Math.floor(((e.clientY-r.top)/HPX+(ui.h0||0))*2)/2;
   openEd({d:c.dataset.k,a:pad(Math.floor(m))+':'+(m%1?'30':'00')})});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.ed){ui.ed=null;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(ui.ed||ui.ie)){ui.ed=null;ui.ie=null;render()}});
 /* drag to reorder: today's tasks and routines */
 let drag=null;
 const clearDrop=()=>document.querySelectorAll('.drop-b,.drop-a').forEach(x=>x.classList.remove('drop-b','drop-a'));
