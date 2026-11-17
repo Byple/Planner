@@ -147,12 +147,29 @@ body.login nav.tabs{display:none}
 .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 6px 6px 16px;border-radius:16px;display:flex;gap:10px;align-items:center;max-width:calc(100% - 32px);z-index:9;font-size:15px;font-weight:500}
 .toast[hidden]{display:none}.toast button{color:var(--acc)}
 @media(max-width:480px){.ring{width:108px;height:108px}.ring b{font-size:24px}.year{grid-template-columns:repeat(2,minmax(0,1fr))}}
+summary small{font:500 14px 'Golos Text',sans-serif;color:var(--mute);margin-left:10px}
+.brand{display:none}
+@media(min-width:1000px){
+  body{padding:0 0 0 228px}
+  .wrap{max-width:1180px;padding:0 40px}
+  nav.tabs{top:0;bottom:0;right:auto;width:228px;display:block;padding:24px 14px;box-shadow:1px 0 0 var(--line);background:var(--card);backdrop-filter:none}
+  nav.tabs div{flex-direction:column;gap:4px}
+  .brand{display:block;font:700 18px/1.2 var(--hd);padding:4px 12px 22px}
+  nav.tabs a{display:flex;align-items:center;gap:12px;flex:none;font-size:15px;padding:10px 12px;min-height:46px;justify-items:start}
+  nav.tabs a.on{background:var(--bg)}
+  nav.tabs a.on::after{margin-left:auto;width:6px;height:6px}
+  .toast{bottom:24px;left:calc(50% + 114px)}
+  .cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:40px;align-items:start}
+  .ring{width:140px;height:140px}.ring b{font-size:30px}
+  h1{font-size:36px}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <nav class="tabs" aria-label="Разделы"><div>
+<b class="brand">Мой день</b>
 <a href="#today" id="n-today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Сегодня</a>
 <a href="#projects" id="n-projects"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Проекты</a>
 <a href="#inbox" id="n-inbox"><svg viewBox="0 0 24 24"><path d="M4 13l2.5-7h11L20 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 13h4.5l1 2h5l1-2H20"/></svg>Выгрузка</a>
@@ -290,20 +307,21 @@ function taskItem(t){
 function todayHTML(){
   const T=todayTasks().sort((a,b)=>(a.s==='done')-(b.s==='done')||b.w-a.w),L=S.rlog[today()]||{},TL=tails();
   let h=`${skyHTML()}<div class="wrap">${morningHTML()}${focusHTML()}`;
-  h+=`<h2>Дела на сегодня</h2><div class="stack">${T.map(taskItem).join('')||'<p class="hint">Пока пусто. Возьми шаг из проектов ниже или впиши своё.</p>'}</div>
+  let A='',Z='';
+  A+=`<h2>Дела на сегодня</h2><div class="stack">${T.map(taskItem).join('')||'<p class="hint">Пока пусто. Впиши своё или возьми шаг из проектов ниже.</p>'}</div>
   <form class="add" id="tf"><div class="r"><input id="tt" placeholder="Что важно сделать" maxlength="160" required><input type="date" id="td" value="${today()}" min="${today()}" aria-label="Когда" style="flex:0 0 auto;width:auto"></div><div class="r">${seg('tw')}<button class="pri">Добавить</button></div></form>`;
   const FU=S.tasks.filter(t=>t.s==='today'&&t.d>today()&&!t.pl).sort((a,b)=>a.d<b.d?-1:1);
-  if(FU.length)h+=`<details><summary>Запланировано · ${FU.length}</summary><div class="stack">${FU.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small><span>${human(t.d)}</span>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')}</div></details>`;
-  if(S.routines.length)h+=`<h2>Рутина <small>минимум засчитывается наполовину</small></h2><div class="stack">${S.routines.map(r=>{const v=L[r.id];return `<div class="item rt${v==='full'?' x':''}"><button class="chk${v==='full'?' on':v==='min'?' half':''}" data-a="rfull" data-id="${r.id}" aria-label="Сделано полностью"></button><span class="tt">${esc(r.t)}<small>${dots(r.w)}${r.min?' · минимум: '+esc(r.min):''}</small></span>${r.min?`<button class="mn${v==='min'?' on':''}" data-a="rmin" data-id="${r.id}">минимум</button>`:''}</div>`}).join('')}</div>`;
-  else h+=`<h2>Рутина</h2><p class="hint">Ежедневные дела добавляются во вкладке <a href="#projects">Проекты</a>.</p>`;
+  if(FU.length)A+=`<details><summary>Запланировано · ${FU.length}</summary><div class="stack">${FU.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small><span>${human(t.d)}</span>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">Сегодня</button><button class="ic" data-a="tdel" data-id="${t.id}" aria-label="Удалить">✕</button></div>`).join('')}</div></details>`;
+  if(S.routines.length)Z+=`<h2>Рутина <small>минимум засчитывается наполовину</small></h2><div class="stack">${S.routines.map(r=>{const v=L[r.id];return `<div class="item rt${v==='full'?' x':''}"><button class="chk${v==='full'?' on':v==='min'?' half':''}" data-a="rfull" data-id="${r.id}" aria-label="Сделано полностью"></button><span class="tt">${esc(r.t)}<small>${dots(r.w)}${r.min?' · минимум: '+esc(r.min):''}</small></span>${r.min?`<button class="mn${v==='min'?' on':''}" data-a="rmin" data-id="${r.id}">минимум</button>`:''}</div>`}).join('')}</div>`;
+  else Z+=`<h2>Рутина</h2><p class="hint">Ежедневные дела добавляются во вкладке <a href="#projects">Проекты</a>.</p>`;
   const act=S.projects.filter(p=>p.on).map(p=>({p,n:nextStep(p.id),lag:(p.goal||0)-weekDone(p.id)})).filter(x=>x.n).sort((a,b)=>b.lag-a.lag);
   const en=day(today()).en,k=en?(en<=2?1:en<=3?2:3):null;
-  if(act.length)h+=`<h2>Следующие шаги <small>${k?'сегодня по силам: '+k:'выбери 1–3'}</small></h2><div class="stack">${act.map(x=>`<div class="item"><span class="tt">${esc(x.n.t)}<small>${tag(x.p)}${dots(x.n.w)}${x.lag>0?' · на неделе ещё '+x.lag:''}</small></span><button class="soft sm" data-a="totoday" data-id="${x.n.id}">+ сегодня</button></div>`).join('')}</div>`;
-  if(TL.length)h+=`<h2>Хвосты <small>с прошлых дней</small></h2><div class="stack">${TL.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">На сегодня</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="Отложить">↩</button></div>`).join('')}</div>`;
+  if(act.length)A+=`<h2>Взять из проектов <small>${k?'сегодня по силам: '+k:'выбери 1–3'}</small></h2><div class="stack">${act.map(x=>`<div class="item"><span class="tt">${esc(x.n.t)}<small>${tag(x.p)}${dots(x.n.w)}${x.lag>0?' · на неделе ещё '+x.lag:''}</small></span><button class="soft sm" data-a="totoday" data-id="${x.n.id}">+ сегодня</button></div>`).join('')}</div>`;
+  if(TL.length)A+=`<h2>Хвосты <small>с прошлых дней</small></h2><div class="stack">${TL.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">На сегодня</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="Отложить">↩</button></div>`).join('')}</div>`;
   const B=S.blocks.filter(b=>b.d===today()).sort((a,b)=>a.a<b.a?-1:1),n=nowHM(),st=B.length?B[B.length-1].b:n;
-  h+=`<details class="tl"${B.length?' open':''}><summary>План по времени${B.length?' · '+B.length:''}</summary><div class="stack">${B.map(b=>{const cur=!b.x&&b.a<=n&&n<b.b;return `<div class="item${b.x?' x':''}${cur?' cur':''}"><time>${b.a}</time><span class="tt">${esc(b.t)}<small>до ${b.b}${cur?' · сейчас':''}</small></span><button class="chk${b.x?' on':''}" data-a="bx" data-id="${b.id}" aria-label="Отметить"></button><button class="ic" data-a="bdel" data-id="${b.id}" aria-label="Удалить">✕</button></div>`}).join('')}</div>
+  Z+=`<details class="tl"${B.length?' open':''}><summary>План по времени${B.length?' · '+B.length:'<small>+ добавить</small>'}</summary><div class="stack">${B.map(b=>{const cur=!b.x&&b.a<=n&&n<b.b;return `<div class="item${b.x?' x':''}${cur?' cur':''}"><time>${b.a}</time><span class="tt">${esc(b.t)}<small>до ${b.b}${cur?' · сейчас':''}</small></span><button class="chk${b.x?' on':''}" data-a="bx" data-id="${b.id}" aria-label="Отметить"></button><button class="ic" data-a="bdel" data-id="${b.id}" aria-label="Удалить">✕</button></div>`}).join('')}</div>
   <form class="add" id="bf"><div class="r"><input type="time" id="ba" required value="${st}" aria-label="Начало"><input type="time" id="bb" required value="${addMin(st,60)}" aria-label="Конец"><input id="bt" placeholder="Что делаю" maxlength="120" required><button class="pri">Добавить</button></div></form></details>`;
-  return h+`<p class="foot">Маленькими шагами, по одному за раз.</p></div>`;
+  return h+`<div class="cols"><div>${A}</div><div class="side">${Z}</div></div><p class="foot">Маленькими шагами, по одному за раз.</p></div>`;
 }
 
 /* ---------- Проекты ---------- */
