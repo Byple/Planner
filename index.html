@@ -501,6 +501,33 @@ function openEd(e,k){
   render();setTimeout(()=>{const i=$('#edt');if(i)i.focus()},0);
 }
 /* ---------- редактирование задач, проектов, рутины, повторов ---------- */
+/* ---------- ссылка «добавить в планер» (#add=<base64url JSON>) ---------- */
+let pulled=false;
+function readImport(){
+  const h=location.hash;if(!h.startsWith('#add='))return;
+  try{let b=h.slice(5).replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';
+    const bin=atob(b),bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));const p=JSON.parse(new TextDecoder().decode(bytes));
+    ui.imp={events:(p.events||[]).filter(e=>e&&e.t&&e.d&&e.a&&e.b).slice(0,60),tasks:(p.tasks||[]).filter(t=>t&&t.t).slice(0,60)};
+  }catch(e){toast('Ссылка повреждена')}
+  history.replaceState(null,'',location.pathname+'#today');
+}
+function importHTML(){
+  const I=ui.imp;if(!I)return'';
+  const wait=sb&&user&&!pulled;
+  const ev=I.events.map(e=>`<div class="item" style="box-shadow:none"><time style="color:${ECOL[e.c||0][1]};width:96px">${e.a}–${e.b}</time><span class="tt">${esc(e.t)}<small>${e.rep?'↻ '+repText(e.rep)+' · с '+human(e.d):human(e.d)}</small></span></div>`).join('');
+  const tk=I.tasks.map(t=>`<div class="item" style="box-shadow:none"><span class="tt">${esc(t.t)}<small>${t.d?human(t.d):'на сегодня'} · ×${t.w||2}</small></span></div>`).join('');
+  return `<div class="modal" data-a="impno"><div class="sheet" data-a="noop"><h2 style="margin-top:0">Добавить в планер?</h2>
+  <p class="hint" style="margin:0">${I.events.length?I.events.length+' '+(I.events.length===1?'событие':'событий')+' в календарь':''}${I.events.length&&I.tasks.length?' и ':''}${I.tasks.length?I.tasks.length+' задач':''}. Уже существующие повторно не добавятся.</p>
+  <div class="stack" style="gap:4px">${ev}${tk}</div>
+  <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="sm" data-a="impno">Отмена</button><button class="pri" data-a="impyes"${wait?' disabled':''}>${wait?'Синхронизация…':'Добавить'}</button></div></div></div>`;
+}
+function applyImport(){
+  const I=ui.imp;let n=0;
+  I.events.forEach(e=>{const same=S.events.find(x=>x.t===e.t&&x.a===e.a&&x.b===e.b&&(x.d===e.d||(x.rep&&e.rep&&JSON.stringify(x.rep)===JSON.stringify(e.rep))));
+    if(!same){S.events.push({id:uid(),t:String(e.t).slice(0,120),c:+e.c||0,d:e.d,a:e.a,b:e.b,rep:e.rep||null,ex:[],done:{}});n++}});
+  I.tasks.forEach(t=>{const d=t.d&&t.d>today()?t.d:today();if(!S.tasks.some(x=>x.t===t.t&&x.d===d&&x.s!=='inbox')){S.tasks.push({id:uid(),t:String(t.t).slice(0,160),w:+t.w||2,p:null,s:'today',d,done:'',o:0});n++}});
+  ui.imp=null;save();toast(n?'Добавлено: '+n:'Всё уже было в планере');
+}
 function itemEdHTML(){
   const M=ui.ie;if(!M)return'';
   const o=M.k==='task'?S.tasks.find(x=>x.id===M.id):M.k==='proj'?S.projects.find(x=>x.id===M.id):M.k==='rt'?S.routines.find(x=>x.id===M.id):S.plans.find(x=>x.id===M.id);
@@ -571,7 +598,7 @@ function render(){
   if(lg){$('#app').innerHTML=loginHTML();return}
   const v=view();
   ['today','calendar','projects','inbox','diary','review'].forEach(x=>{const a=$('#n-'+x);a.className=x===v?'on':'';if(x===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  $('#app').innerHTML=(v==='calendar'?calHTML():v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML())+editorHTML()+itemEdHTML();
+  $('#app').innerHTML=(v==='calendar'?calHTML():v==='diary'?diaryHTML():v==='projects'?projectsHTML():v==='inbox'?inboxHTML():v==='review'?reviewHTML():todayHTML())+editorHTML()+itemEdHTML()+importHTML();
   lastMin=nowHM();
 }
 
@@ -612,6 +639,8 @@ document.addEventListener('click',e=>{
   else if(a==='vnext'){const n=shift(cur(),1);ui.vd=n>=today()?null:n;render()}
   else if(a==='vtoday'){ui.vd=null;render()}
   else if(a==='vopen'){ui.vd=b.dataset.k<today()?b.dataset.k:null;location.hash='today';render();scrollTo(0,0)}
+  else if(a==='impyes'&&ui.imp){applyImport();if(S.events.length)location.hash='calendar'}
+  else if(a==='impno'){ui.imp=null;render()}
   else if(a==='dsel'){ui.sel=ui.sel===b.dataset.k?null:b.dataset.k;render()}
   else if(a==='mood'){day(today()).mood=+b.dataset.n;save()}
   else if(a==='pick'){ui.pick=ui.pick===id?null:id;render()}
@@ -701,7 +730,7 @@ document.addEventListener('drop',e=>{if(!drag)return;const it=e.target.closest&&
 document.addEventListener('dragend',()=>{drag=null;clearDrop();document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging'))});
 document.addEventListener('change',e=>{if(e.target.id==='dpick'&&e.target.value){ui.dk=e.target.value>today()?today():e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target.id!=='imp'||!e.target.files[0])return;e.target.files[0].text().then(txt=>{const d=JSON.parse(txt);if(!d||!Array.isArray(d.tasks))throw 0;S=migrate(d);S.updated=0;save();toast('Данные импортированы')}).catch(()=>toast('Это не файл планера'))});
-window.addEventListener('hashchange',()=>{if(location.hash==='#calendar')scrollNow();ui.pick=null;render();scrollTo(0,0)});
+window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#add=')){readImport();render();return}if(location.hash==='#calendar')scrollNow();ui.pick=null;render();scrollTo(0,0)});
 
 setInterval(()=>{
   const f=S.focus;
@@ -714,14 +743,14 @@ setInterval(()=>{
   if(nowHM()!==lastMin&&!busy)render();
 },1000);
 
-render();if(view()==='calendar')scrollNow();
+readImport();render();if(view()==='calendar')scrollNow();
 
 /* ---------- Supabase: вход по почте и синхронизация ---------- */
 async function pull(){
   if(!sb||!user)return;
   const{data,error}=await sb.from('planner_state').select('state').eq('user_id',user.id).maybeSingle();
   if(error){cloud=false;toast('Нет связи с базой: '+error.message);return}
-  cloud=true;const cs=data&&data.state;
+  cloud=true;pulled=true;const cs=data&&data.state;
   if(cs&&(cs.updated||0)>(S.updated||0)&&!dirty&&!writing){
     S=migrate(cs);try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
     const busy=document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy)render();
