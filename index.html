@@ -121,12 +121,15 @@ summary{font:700 17px/1.25 var(--hd);cursor:pointer;min-height:44px;display:flex
 .mo b{display:block;font-size:13px;font-weight:600;margin-bottom:4px;text-transform:capitalize}
 .mo .g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
 .mo i,.mo button{aspect-ratio:1;border-radius:4px;min-height:0;padding:0;display:block;width:100%}
-.mo button{background:color-mix(in srgb,var(--line) 60%,transparent)}
+.mo button{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)}
+.mo button.t{box-shadow:0 0 0 1.5px var(--ink)}
 .mo button.t{box-shadow:0 0 0 1.5px var(--ink)}
 .mo button.sel{box-shadow:0 0 0 2px var(--acc)}
-.l0{background:light-dark(#ddd5f3,#3b3164)!important}.l1{background:light-dark(#b9a8ec,#5440a3)!important}.l2{background:light-dark(#9076e0,#7257d6)!important}.l3{background:light-dark(#6d4fd0,#9479f2)!important}.l4{background:light-dark(#4a2db8,#c2b1ff)!important}
+.l0{background:light-dark(#8f8a84,#4a4541)!important}.l1{background:light-dark(#f0a050,#d98a45)!important}.l2{background:light-dark(#f3d35c,#e2c24f)!important}.l3{background:light-dark(#a6dba9,#6fae7b)!important}.l4{background:light-dark(#2f9e50,#45d36c)!important}
+.nd{background:transparent!important;box-shadow:inset 0 0 0 1.5px var(--line)}
 .legend{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mute);margin-top:12px}
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.lg2{flex-wrap:wrap;gap:6px 14px}.lg2 span{display:inline-flex;align-items:center;gap:5px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}.chips label{position:relative}.chips input{position:absolute;opacity:0;width:1px;height:1px}
 .chips span{display:grid;place-items:center;min-width:44px;min-height:40px;padding:0 8px;border-radius:12px;border:1.5px solid var(--line);font-weight:600;font-size:14px;cursor:pointer;background:var(--card)}
 .chips input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}.chips input:focus-visible+span{outline:3px solid var(--acc)}
@@ -453,7 +456,7 @@ function reviewHTML(){
   <h2>Год</h2><div class="stats"><div><b>${avgOf(7,'t')}</b><span>дела за неделю</span></div><div><b>${avgOf(7,'r')}</b><span>рутина за неделю</span></div><div><b>${avgOf(30)}</b><span>день в среднем за месяц</span></div><div><b>${streak}</b><span>дней подряд от 50%</span></div></div>
   <div class="seg ymseg" role="group" aria-label="Что показывать на карте">${[['tot','Общий'],['t','Дела'],['r','Рутина']].map(([m,l])=>`<button class="${ym===m?'on':''}" data-a="ym" data-m="${m}">${l}</button>`).join('')}</div>
   <div class="year" style="margin-top:18px">${months}</div>
-  <div class="legend">меньше <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> 80% и выше</div>
+  <div class="legend lg2"><span><i class="l0"></i>0–19%</span><span><i class="l1"></i>20–39%</span><span><i class="l2"></i>40–59%</span><span><i class="l3"></i>60–79%</span><span><i class="l4"></i>80%+</span><span><i class="nd"></i>нет данных</span></div>
   ${det}
   <p class="hint">Нажми на день, чтобы увидеть детали. Со временем сравни проценты с силами и самочувствием: так видно, что на самом деле влияет на твои дни.</p>
   <h2>Данные</h2><div class="card">${user?`Вход: ${esc(user.email)}<br><span class="hint">${cloud?'Синхронизируется между устройствами':'Нет связи с базой, данные сохраняются локально'}</span>`:'Без входа: данные только в этом браузере'}
