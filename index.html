@@ -344,7 +344,7 @@ function skyHTML(){
   const body=`<span class="${isSun?'sun':'moon'}" style="left:${x}%;top:${6+y/60*130}px"></span>`;
   return `<section class="sky ${ph}"><svg class="arc" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 58 A44 50 0 0 1 94 58" vector-effect="non-scaling-stroke"/></svg>
   ${body}
-  <div class="wrap hero"><div><h1>${PD?(cur()===shift(today(),-1)?'Вчера':'Прошлый день'):hi}</h1><div class="sub daynav"><button class="dn" data-a="vprev" aria-label="Предыдущий день"${cur()<=shift(today(),-30)?' disabled':''}>‹</button><span>${d.charAt(0).toUpperCase()+d.slice(1)}</span><button class="dn" data-a="vnext" aria-label="Следующий день"${PD?'':' disabled'}>›</button>${PD?'<button class="dn wide" data-a="vtoday">Сегодня</button>':''}</div>${pc!==null?`<div class="legend2"><span><i class="lt"></i>Дела ${sc.T}%</span><span><i class="lr"></i>Рутина ${sc.R}%</span></div>`:''}${energyChip()}</div>
+  <div class="wrap hero"><div><h1>${PD?(cur()===shift(today(),-1)?'Вчера':'Прошлый день'):hi}</h1><div class="sub daynav"><button class="dn" data-a="vprev" aria-label="Предыдущий день"${cur()<=shift(today(),-30)?' disabled':''}>‹</button><span>${d.charAt(0).toUpperCase()+d.slice(1)}</span><button class="dn" data-a="vnext" aria-label="Следующий день"${PD?'':' disabled'}>›</button>${PD?'<button class="dn wide" data-a="vtoday">Сегодня</button>':''}</div>${pc!==null?`<div class="legend2"><span><i class="lt"></i>Дела ${sc.T}%</span><span><i class="lr"></i>Рутина ${sc.R}%</span></div>`:''}</div>
   <div class="ring" role="img" aria-label="День ${pc??0}%: дела ${sc.T}%, рутина ${sc.R}%"><svg viewBox="0 0 140 140"><circle class="tr" cx="70" cy="70" r="56"/><circle class="fg" cx="70" cy="70" r="56" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-(pc===null?0:sc.T)/100)}"/><circle class="tr" cx="70" cy="70" r="41"/><circle class="fg2" cx="70" cy="70" r="41" stroke-dasharray="${C2}" stroke-dashoffset="${C2*(1-(pc===null?0:sc.R)/100)}"/></svg><b>${pc!==null?pc+'%':'–'}</b></div></div></section>`;
 }
 function energyChip(){
@@ -372,7 +372,7 @@ function taskItem(t){
 }
 function todayHTML(){
   const T=todayTasks().sort((a,b)=>(a.s==='done')-(b.s==='done')||(a.ot??999)-(b.ot??999)||b.w-a.w),L=S.rlog[cur()]||{},TL=past()?[]:tails(),PD=past();
-  let h=`${skyHTML()}<div class="wrap">${PD?`<div class="nudge"><div><b>Ты отмечаешь ${new Date(cur()+'T12:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}.</b> Отметь, что успел: процент того дня пересчитается.</div><button class="pri sm" data-a="vtoday">Вернуться в сегодня</button></div>`:''}${morningHTML()}${PD?'':focusHTML()}`;
+  let h=`${skyHTML()}<div class="wrap">${PD?`<div class="nudge"><div><b>Ты отмечаешь ${new Date(cur()+'T12:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}.</b> Отметь, что успел: процент того дня пересчитается.</div><button class="pri sm" data-a="vtoday">Вернуться в сегодня</button></div>`:''}${PD?'':focusHTML()}`;
   let A='',Z='';
   {const sc=score(today()),open=T.filter(t=>t.s!=='done');
    if(!PD&&!S.focus&&sc.tp&&sc.rp&&sc.R-sc.T>=40&&new Date().getHours()>=12&&open.length)
@@ -385,7 +385,7 @@ function todayHTML(){
   else Z+=`<h2>Рутина</h2><p class="hint">Ежедневные дела добавляются во вкладке <a href="#projects">Проекты</a>.</p>`;
   const act=S.projects.filter(p=>p.on).map(p=>({p,n:nextStep(p.id),lag:(p.goal||0)-weekDone(p.id)})).filter(x=>x.n).sort((a,b)=>b.lag-a.lag);
   const en=day(today()).en,k=en?(en<=2?1:en<=3?2:3):null;
-  if(act.length&&!PD)A+=`<h2>Взять из проектов <small>${k?'сегодня по силам: '+k:'выбери 1–3'}</small></h2><div class="stack">${act.map(x=>`<div class="item"><span class="tt">${esc(x.n.t)}<small>${tag(x.p)}${dots(x.n.w)}${x.lag>0?' · на неделе ещё '+x.lag:''}</small></span><button class="soft sm" data-a="totoday" data-id="${x.n.id}">+ сегодня</button></div>`).join('')}</div>`;
+  if(act.length&&!PD)A+=`<h2>Взять из проектов <small>выбери 1–3</small></h2><div class="stack">${act.map(x=>`<div class="item"><span class="tt">${esc(x.n.t)}<small>${tag(x.p)}${dots(x.n.w)}${x.lag>0?' · на неделе ещё '+x.lag:''}</small></span><button class="soft sm" data-a="totoday" data-id="${x.n.id}">+ сегодня</button></div>`).join('')}</div>`;
   if(TL.length)A+=`<h2>Хвосты <small>с прошлых дней</small></h2><div class="stack">${TL.map(t=>`<div class="item"><span class="tt">${esc(t.t)}<small>${tag(proj(t.p))}${dots(t.w)}</small></span><button class="soft sm" data-a="totoday" data-id="${t.id}">На сегодня</button><button class="ic" data-a="tback" data-id="${t.id}" aria-label="Отложить">↩</button></div>`).join('')}</div>`;
   const kT=cur(),B=occOn(kT),n=nowHM(),st=B.length&&B[B.length-1].b>n?B[B.length-1].b:n;
   Z+=`<details class="tl"${B.length?' open':''}><summary>План по времени${B.length?' · '+B.length:'<small>+ добавить</small>'}</summary><div class="stack">${B.map(b=>{const x=!!(b.done&&b.done[kT]),cur=!x&&b.a<=n&&n<b.b;return `<div class="item${x?' x':''}${cur?' cur':''}"><time style="color:${ecol(b)}">${b.a}</time><span class="tt">${esc(b.t)}<small>до ${b.b}${cur?' · сейчас':''}${b.rep?' · ↻ '+repText(b.rep):''}</small></span><button class="chk${x?' on':''}" data-a="bx" data-id="${b.id}" aria-label="Отметить"></button><button class="ic" data-a="bdel" data-id="${b.id}" aria-label="${b.rep?'Убрать сегодня':'Удалить'}">✕</button></div>`}).join('')}</div>
@@ -445,12 +445,12 @@ function reviewHTML(){
     months+=`<div class="mo"><b>${f.toLocaleDateString('ru-RU',{month:'long'})}${f.getMonth()===11||i===0?' '+f.getFullYear():''}</b><div class="g">${g}</div></div>`}
   let det='';
   if(ui.sel){const x=S.days[ui.sel]||{},v=pct(ui.sel),dl=new Date(ui.sel+'T12:00').toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-    det=`<div class="card" style="margin-top:14px"><b>${dl.charAt(0).toUpperCase()+dl.slice(1)}</b><div>${v===null?'Нет данных':v+'%'}${x.T!==undefined?` · дела ${x.T}% · рутина ${x.R}%`:''}${x.en?' · силы '+x.en+'/5':''}${x.mood?' · самочувствие '+x.mood+'/5':''}</div>${x.note?`<p class="hint" style="margin-bottom:0">${esc(x.note)}</p>`:''}${ui.sel>=shift(today(),-30)?`<button class="soft sm" data-a="vopen" data-k="${ui.sel}" style="margin-top:10px">Открыть этот день и отметить</button>`:''}</div>`}
+    det=`<div class="card" style="margin-top:14px"><b>${dl.charAt(0).toUpperCase()+dl.slice(1)}</b><div>${v===null?'Нет данных':v+'%'}${x.T!==undefined?` · дела ${x.T}% · рутина ${x.R}%`:''}</div>${x.note?`<p class="hint" style="margin-bottom:0">${esc(x.note)}</p>`:''}${ui.sel>=shift(today(),-30)?`<button class="soft sm" data-a="vopen" data-k="${ui.sel}" style="margin-top:10px">Открыть этот день и отметить</button>`:''}</div>`}
   return `<div class="wrap"><h2 style="margin-top:22px">Итоги дня</h2><div class="big">${pc!==null?pc+'%':'–'}</div>
   <div class="split"><div><i class="lt"></i><b>${sc.T}%</b><span>дела${sc.tp?` · ${+sc.te.toFixed(1)} из ${sc.tp}`:' · не запланированы'}</span></div><div><i class="lr"></i><b>${sc.R}%</b><span>рутина${sc.rp?` · ${+sc.re.toFixed(1)} из ${sc.rp}`:''}</span></div></div>
-  ${pc!==null&&Math.abs(sc.T-sc.R)>30?`<p class="hint">Перекос ${Math.abs(sc.T-sc.R)} пунктов: штраф −${Math.round((sc.T+sc.R)/2)-pc}%.</p>`:''}${dd.en?`<p class="hint">Силы были ${dd.en}/5</p>`:''}
+  ${pc!==null&&Math.abs(sc.T-sc.R)>30?`<p class="hint">Перекос ${Math.abs(sc.T-sc.R)} пунктов: штраф −${Math.round((sc.T+sc.R)/2)-pc}%.</p>`:''}
   ${D.length?`<div class="card"><b>Сделано</b>${D.map(x=>`<div>✓ ${esc(x)}</div>`).join('')}</div>`:''}
-  <h2>Как ощущался день?</h2><div class="energy">${[1,2,3,4,5].map(n=>`<button data-a="mood" data-n="${n}" class="${dd.mood===n?'on':''}">${n}</button>`).join('')}</div><div class="elab"><span>тяжело</span><span>отлично</span></div>
+  <h2>Пара слов о дне</h2>
   <textarea class="dnote" data-k="${k}" rows="3" placeholder="Что получилось, что мешало, что взять на завтра" style="margin-top:10px">${esc(dd.note||'')}</textarea>
   <p class="hint">Это та же запись, что в <a href="#diary">дневнике</a> за сегодня.</p>
   <h2>Год</h2><div class="stats"><div><b>${avgOf(7,'t')}</b><span>дела за неделю</span></div><div><b>${avgOf(7,'r')}</b><span>рутина за неделю</span></div><div><b>${avgOf(30)}</b><span>день в среднем за месяц</span></div><div><b>${streak}</b><span>дней подряд от 50%</span></div></div>
@@ -458,7 +458,7 @@ function reviewHTML(){
   <div class="year" style="margin-top:18px">${months}</div>
   <div class="legend lg2"><span><i class="l0"></i>0–19%</span><span><i class="l1"></i>20–39%</span><span><i class="l2"></i>40–59%</span><span><i class="l3"></i>60–79%</span><span><i class="l4"></i>80%+</span><span><i class="nd"></i>нет данных</span></div>
   ${det}
-  <p class="hint">Нажми на день, чтобы увидеть детали. Со временем сравни проценты с силами и самочувствием: так видно, что на самом деле влияет на твои дни.</p>
+  <p class="hint">Нажми на день, чтобы увидеть детали и заметку.</p>
   <h2>Данные</h2><div class="card">${user?`Вход: ${esc(user.email)}<br><span class="hint">${cloud?'Синхронизируется между устройствами':'Нет связи с базой, данные сохраняются локально'}</span>`:'Без входа: данные только в этом браузере'}
   <div class="row">${user?'<button class="soft sm" data-a="logout">Выйти</button>':(sb?'<button class="soft sm" data-a="login">Войти</button>':'')}<button class="soft sm" data-a="export">Экспорт</button><label class="soft sm btnl">Импорт<input type="file" id="imp" accept=".json,application/json" hidden></label></div></div>
   <p class="foot">Дела и рутина считаются отдельно по баллам: лёгкая 1, средняя 2, сложная 3, минимум рутины — половина. Если дел нет, дела = 100%. Процент дня — среднее двух, минус половина разрыва сверх 30 пунктов. Раздельная статистика копится с 17 ноября 2026.</p></div>`;
@@ -574,7 +574,7 @@ function diaryList(){
   const E=Object.keys(S.days).filter(k=>S.days[k].note&&(!q||S.days[k].note.toLowerCase().includes(q))).sort().reverse();
   if(!E.length)return `<p class="hint">${q?'Ничего не нашлось.':'Записей пока нет. Первая — сегодняшняя.'}</p>`;
   return E.map(k=>{const x=S.days[k],v=x.p?Math.round(x.e/x.p*100):null,t=x.note.replace(/\s+/g,' ');
-    const hd=human(k);return `<button class="dentry${k===ui.dk?' on':''}" data-a="dgo" data-k="${k}"><b>${hd.charAt(0).toUpperCase()+hd.slice(1)}</b><span>${[v!==null?v+'%':'',x.mood?'самочувствие '+x.mood+'/5':''].filter(Boolean).join(' · ')}</span><p>${esc(t.length>140?t.slice(0,140)+'…':t)}</p></button>`}).join('');
+    const hd=human(k);return `<button class="dentry${k===ui.dk?' on':''}" data-a="dgo" data-k="${k}"><b>${hd.charAt(0).toUpperCase()+hd.slice(1)}</b><span>${v!==null?v+'%':''}</span><p>${esc(t.length>140?t.slice(0,140)+'…':t)}</p></button>`}).join('');
 }
 function diaryHTML(){
   const k=ui.dk||today(),x=S.days[k]||{},isT=k===today(),n=((x.note||'').match(/\S+/g)||[]).length;
@@ -583,7 +583,6 @@ function diaryHTML(){
   <div class="dnav"><button class="ic" data-a="dprev" aria-label="Предыдущий день">‹</button>
   <label class="dpick"><span>${dl.charAt(0).toUpperCase()+dl.slice(1)}</span><input type="date" id="dpick" value="${k}" max="${today()}" aria-label="Выбрать дату"></label>
   <button class="ic" data-a="dnext" aria-label="Следующий день" ${isT?'disabled':''}>›</button>${isT?'':'<button class="soft sm" data-a="dtoday">Сегодня</button>'}</div>
-  <div class="row" style="margin-top:6px"><span class="hint" style="margin:0">Самочувствие:</span>${[1,2,3,4,5].map(m=>`<button class="mn${x.mood===m?' on':''}" data-a="dmood" data-n="${m}">${m}</button>`).join('')}</div>
   <textarea class="dnote diary" data-k="${k}" placeholder="${isT?'Что происходит сегодня? Что думаешь, что чувствуешь…':'Запись за этот день'}">${esc(x.note||'')}</textarea>
   <div class="dmeta"><span id="dwc">${n?n+' сл.':''}</span><span id="dsaved">${x.note?'Сохранено':''}</span></div>
   <h2>Все записи</h2><input id="dq" type="search" placeholder="Поиск по дневнику" value="${esc(ui.dq||'')}" style="margin-bottom:10px">
